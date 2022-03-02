@@ -1,18 +1,44 @@
 package pl.krypto.frontend;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 
 public class MainFormController {
 
     public static final String MAIN_FORM_RESOURCE = "MainForm.fxml";
-    public static final String MAIN_FORM_TITLE = "Hello cryptography!";
+    public static final String MAIN_FORM_TITLE = "AES encryption/decryption";
 
     @FXML
-    private Label welcomeText;
+    public TextField key;
+    public TextArea plainText;
+    public TextArea cryptogram;
 
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
+    public void generateKey() {
+
+    }
+
+    public void readFromFile() {
+
+    }
+
+    public void writeToFile() {
+
+    }
+
+    public void writeKeyToFile() {
+
+    }
+
+    public void readKeyFromFile() {
+
+    }
+
+    public void encrypt() {
+        cryptogram.setText(plainText.getText());
+    }
+
+    public void decrypt() {
+        plainText.setText(cryptogram.getText());
     }
 }
