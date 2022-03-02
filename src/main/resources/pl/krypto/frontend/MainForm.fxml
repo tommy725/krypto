@@ -1,16 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="pl.krypto.frontend.MainFormController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+      prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="pl.krypto.frontend.MainFormController">
+
+    <Label layoutX="20.0" layoutY="20.0" prefHeight="25.0" prefWidth="28.0" text="Klucz"/>
+    <TextField fx:id="key" layoutX="60.0" layoutY="20.0" prefHeight="25.0" prefWidth="400.0" promptText="Wpisz klucz"/>
+    <Button layoutX="155.0" layoutY="50.0" mnemonicParsing="false" onAction="#writeKeyToFile" prefHeight="25.0"
+            prefWidth="150.0" text="Zapisz klucz do pliku"/>
+    <Button layoutX="310.0" layoutY="50.0" mnemonicParsing="false" onAction="#readKeyFromFile" prefHeight="25.0"
+            prefWidth="150.0" text="Odczytaj klucz z pliku"/>
+    <Button layoutX="20.0" layoutY="50.0" mnemonicParsing="false" onAction="#generateKey" prefHeight="25.0"
+            prefWidth="130.0" text="Generuj klucz"/>
+
+    <Button layoutX="480.0" layoutY="20.0" mnemonicParsing="false" onAction="#readFromFile" prefHeight="25.0"
+            prefWidth="100.0" text="Wczytaj plik"/>
+    <Button layoutX="480.0" layoutY="50.0" mnemonicParsing="false" onAction="#writeToFile" prefHeight="25.0"
+            prefWidth="100.0" text="Zapisz do pliku"/>
+
+    <Label alignment="CENTER_RIGHT" layoutX="480.0" layoutY="86.0" prefHeight="25.0" prefWidth="100.0"
+           text="Szyfrogram"/>
+    <TextArea fx:id="plainText" layoutX="20.0" layoutY="120.0" prefHeight="260.0" prefWidth="275.0"/>
+
+    <Label alignment="CENTER_RIGHT" layoutX="480.0" layoutY="86.0" prefHeight="25.0" prefWidth="100.0"
+           text="Szyfrogram"/>
+    <TextArea fx:id="cryptogram" layoutX="305.0" layoutY="120.0" prefHeight="260.0" prefWidth="275.0"/>>
+
+    <Button layoutX="195.0" layoutY="85.0" mnemonicParsing="false" onAction="#encrypt" prefHeight="25.0"
+            prefWidth="100.0" text="Szyfruj -&gt;"/>
+    <Button layoutX="305.0" layoutY="85.0" mnemonicParsing="false" onAction="#decrypt" prefHeight="25.0"
+            prefWidth="100.0" text="&lt;- Deszyfruj"/>
+</Pane>
