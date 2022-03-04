@@ -19,12 +19,12 @@ public class FileChoose {
      * @throws NoSuchMethodException exception
      * @throws IllegalAccessException exception
      */
-    public static String saveChooser(String windowTitle,Boolean password, ActionEvent actionEvent) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        String choose = choose(
+    public static String saveChooser(String windowTitle,Boolean password, ActionEvent actionEvent)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return choose(
                 windowTitle, actionEvent,
                 FileChooser.class.getMethod("showSaveDialog", Window.class),password
         );
-        return choose;
     }
 
     /**
@@ -37,11 +37,10 @@ public class FileChoose {
      */
     public static String openChooser(String windowTitle,Boolean password, ActionEvent actionEvent)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        String choose = choose(
+        return choose(
                 windowTitle, actionEvent,
                 FileChooser.class.getMethod("showOpenDialog", Window.class),password
         );
-        return choose;
     }
 
     /**
