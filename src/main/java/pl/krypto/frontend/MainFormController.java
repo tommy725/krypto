@@ -10,7 +10,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 public class MainFormController {
 
@@ -38,9 +37,11 @@ public class MainFormController {
      * @throws IOException exception
      */
     public void readFromFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, IOException {
-        String strPath = FileChoose.openChooser("Choose a file to encrypt",actionEvent);
+        String strPath = FileChoose.openChooser("Choose a file to encrypt",false,actionEvent);
         if (!strPath.equals("")) {
-            plainText.setText(fileToString(Paths.get(strPath),true));
+            Path p = Paths.get(strPath);
+            plainData = fileToByteArray(p);
+            plainText.setText(byteArrayToString(plainData));
         }
     }
 
@@ -53,7 +54,7 @@ public class MainFormController {
      * @throws IOException exception
      */
     public void writeToFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, IOException {
-        String strPath = FileChoose.saveChooser("Choose a file to encrypt",actionEvent);
+        String strPath = FileChoose.saveChooser("Choose a file to encrypt",false,actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
             Files.write(p,plainData);
@@ -69,9 +70,11 @@ public class MainFormController {
      * @throws IOException exception
      */
     public void readFromFileEncrypted(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, IOException {
-        String strPath = FileChoose.openChooser("Choose an encrypted file to decrypt",actionEvent);
+        String strPath = FileChoose.openChooser("Choose an encrypted file to decrypt",false,actionEvent);
         if (!strPath.equals("")) {
-            cryptogram.setText(fileToString(Paths.get(strPath),false));
+            Path p = Paths.get(strPath);
+            cryptData = fileToByteArray(p);
+            cryptogram.setText(byteArrayToString(cryptData));
         }
     }
 
@@ -84,20 +87,46 @@ public class MainFormController {
      * @throws IOException exception
      */
     public void writeToFileEncrypted(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, IOException {
-        String strPath = FileChoose.saveChooser("Choose a file to encrypt",actionEvent);
+        String strPath = FileChoose.saveChooser("Choose a file to encrypt",false,actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
             Files.write(p,cryptData);
         }
     }
 
-    public void writeKeyToFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        String strPath = FileChoose.saveChooser("Choose a file with key",actionEvent);
+    /**
+     * Method reads key from given file
+     * @param actionEvent eventFromJavaFX
+     * @throws InvocationTargetException exception
+     * @throws NoSuchMethodException exception
+     * @throws IllegalAccessException exception
+     * @throws IOException exception
+     */
+    public void readKeyFromFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, IOException {
+        String strPath = FileChoose.openChooser("Choose a file to save a key",true,actionEvent);
+        if (!strPath.equals("")) {
+            Path p = Paths.get(strPath);
+            key.setText(new String(fileToByteArray(p)));
+        }
     }
 
-    public void readKeyFromFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
-        String strPath = FileChoose.openChooser("Choose a file to save a key",actionEvent);
+    /**
+     * Method saves key to given file
+     * @param actionEvent eventFromJavaFX
+     * @throws InvocationTargetException exception
+     * @throws NoSuchMethodException exception
+     * @throws IllegalAccessException exception
+     * @throws IOException exception
+     */
+    public void writeKeyToFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, IOException {
+        String strPath = FileChoose.saveChooser("Choose a file with key",true,actionEvent);
+        if (!strPath.equals("")) {
+            Path p = Paths.get(strPath);
+            String passwd = key.getText();
+            Files.write(p,passwd.getBytes());
+        }
     }
+
 
     public void encrypt() {
         cryptogram.setText(plainText.getText());
@@ -108,14 +137,12 @@ public class MainFormController {
     }
 
     /**
-     * Method converts file to string
-     * @param p path
-     * @param isPlain from which textbox
+     * Method converts byte array to string
+     * @param data byteArray
      * @return String
      * @throws IOException exception
      */
-    private String fileToString(Path p,Boolean isPlain) throws IOException {
-        byte[] data = saveByteArray(p,isPlain);
+    private String byteArrayToString(byte[] data) throws IOException {
         StringBuilder buffer = new StringBuilder();
         for (byte b : data) {
             buffer.append((char)b);
@@ -126,16 +153,10 @@ public class MainFormController {
     /**
      * Methods converts file to byte array and saves it in class
      * @param p path
-     * @param isPlain from which textbox
      * @return byte[]
      * @throws IOException exception
      */
-    private byte[] saveByteArray(Path p,Boolean isPlain) throws IOException {
-        if (isPlain) {
-            plainData = Files.readAllBytes(p);
-            return plainData;
-        }
-        cryptData = Files.readAllBytes(p);
-        return cryptData;
+    private byte[] fileToByteArray(Path p) throws IOException {
+        return Files.readAllBytes(p);
     }
 }

@@ -19,10 +19,10 @@ public class FileChoose {
      * @throws NoSuchMethodException exception
      * @throws IllegalAccessException exception
      */
-    public static String saveChooser(String windowTitle, ActionEvent actionEvent) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public static String saveChooser(String windowTitle,Boolean password, ActionEvent actionEvent) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         String choose = choose(
                 windowTitle, actionEvent,
-                FileChooser.class.getMethod("showSaveDialog", Window.class)
+                FileChooser.class.getMethod("showSaveDialog", Window.class),password
         );
         return choose;
     }
@@ -35,11 +35,11 @@ public class FileChoose {
      * @throws NoSuchMethodException exception
      * @throws IllegalAccessException exception
      */
-    public static String openChooser(String windowTitle, ActionEvent actionEvent)
+    public static String openChooser(String windowTitle,Boolean password, ActionEvent actionEvent)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         String choose = choose(
                 windowTitle, actionEvent,
-                FileChooser.class.getMethod("showOpenDialog", Window.class)
+                FileChooser.class.getMethod("showOpenDialog", Window.class),password
         );
         return choose;
     }
@@ -52,10 +52,15 @@ public class FileChoose {
      * @throws IllegalAccessException exception
      * @throws InvocationTargetException exception
      */
-    private static String choose(String windowTitle, ActionEvent actionEvent, Method showDialog)
+    private static String choose(String windowTitle, ActionEvent actionEvent, Method showDialog, Boolean password)
             throws IllegalAccessException, InvocationTargetException {
         FileChooser chooser = new FileChooser();
         chooser.setTitle(windowTitle);
+        if (password) {
+            chooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Password text file (*.txt)", "*.txt")
+            );
+        }
         if (!lastUsedDir.isEmpty()) {
             chooser.setInitialDirectory(new File(lastUsedDir));
         }
