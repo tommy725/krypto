@@ -4,14 +4,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import pl.krypto.backend.Encryptor;
 import pl.krypto.backend.KeyGenerator;
 import pl.krypto.backend.RandomGenerator;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainFormController {
 
@@ -137,7 +141,11 @@ public class MainFormController {
     }
 
     public void encrypt() {
-        cryptogram.setText(plainText.getText());
+        Encryptor e = new Encryptor();
+        byte[] cryptBytes = e.encrypt(plainText.getText().getBytes());
+        System.out.println(Arrays.toString(cryptBytes));
+        String s = new String(cryptBytes, StandardCharsets.UTF_8);
+        cryptogram.setText(s);
     }
 
     public void decrypt() {
