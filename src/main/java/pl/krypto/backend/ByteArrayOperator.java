@@ -78,6 +78,15 @@ public class ByteArrayOperator {
         return temp;
     }
 
+    public byte[] changeByteBasedOnInvSbox16(byte[] temp) {
+        for (int i = 0; i < 16; i++) {
+            int intFromByte = temp[i];
+            if (intFromByte < 0) intFromByte += 256;
+            temp[i] = (byte) SBox.getInvBox(intFromByte / 16, intFromByte % 16);
+        }
+        return temp;
+    }
+
     public byte[] shiftRows(byte[] array) {
         byte[] result = new byte[16];
         //row 1
@@ -100,6 +109,31 @@ public class ByteArrayOperator {
         result[7] = array[3];
         result[11] = array[7];
         result[15] = array[11];
+        return result;
+    }
+
+    public byte[] shiftRowsRight(byte[] array) {
+        byte[] result = new byte[16];
+        //row 1
+        result[0] = array[0];
+        result[4] = array[4];
+        result[8] = array[8];
+        result[12] = array[12];
+        //row 2
+        result[13] = array[9];
+        result[9] = array[5];
+        result[5] = array[1];
+        result[1] = array[13];
+        //row 3
+        result[14] = array[6];
+        result[10] = array[2];
+        result[6] = array[14];
+        result[2] = array[10];
+        //row 4
+        result[15] = array[11];
+        result[11] = array[7];
+        result[7] = array[3];
+        result[3] = array[15];
         return result;
     }
 

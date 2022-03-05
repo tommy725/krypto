@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import pl.krypto.backend.Decryptor;
 import pl.krypto.backend.Encryptor;
 import pl.krypto.backend.KeyGenerator;
 import pl.krypto.backend.RandomGenerator;
@@ -144,12 +145,18 @@ public class MainFormController {
         Encryptor e = new Encryptor();
         byte[] cryptBytes = e.encrypt(plainText.getText().getBytes());
         System.out.println(Arrays.toString(cryptBytes));
-        String s = new String(cryptBytes, StandardCharsets.UTF_8);
+        String s = new String(cryptBytes, StandardCharsets.UTF_16);
         cryptogram.setText(s);
     }
 
     public void decrypt() {
-        plainText.setText(cryptogram.getText());
+        Decryptor d = new Decryptor();
+        byte[] textBytes = cryptogram.getText().getBytes(StandardCharsets.UTF_16);
+        byte[] bytes = Arrays.copyOfRange(textBytes,2,textBytes.length);
+        byte[] cryptBytes = d.decrypt(bytes);
+        System.out.println(Arrays.toString(cryptBytes));
+        String s = new String(cryptBytes, StandardCharsets.UTF_8);
+        plainText.setText(s);
     }
 
     /**
