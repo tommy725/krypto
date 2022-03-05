@@ -4,6 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import pl.krypto.backend.KeyGenerator;
+import pl.krypto.backend.RandomGenerator;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -25,7 +27,7 @@ public class MainFormController {
     private byte[] cryptData;
 
     public void generateKey() {
-
+        key.setText(KeyGenerator.generateKey());
     }
 
     /**
@@ -134,7 +136,6 @@ public class MainFormController {
         }
     }
 
-
     public void encrypt() {
         cryptogram.setText(plainText.getText());
     }
@@ -147,23 +148,12 @@ public class MainFormController {
      * Method converts byte array to string
      * @param data byteArray
      * @return String
-     * @throws IOException exception
      */
-    private String byteArrayToString(byte[] data) throws IOException {
+    private String byteArrayToString(byte[] data) {
         StringBuilder buffer = new StringBuilder();
         for (byte b : data) {
             buffer.append((char)b);
         }
         return buffer.toString();
-    }
-
-    /**
-     * Methods converts file to byte array and saves it in class
-     * @param p path
-     * @return byte[]
-     * @throws IOException exception
-     */
-    private byte[] fileToByteArray(Path p) throws IOException {
-        return Files.readAllBytes(p);
     }
 }
