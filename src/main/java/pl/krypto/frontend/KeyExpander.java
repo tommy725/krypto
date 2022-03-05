@@ -39,9 +39,12 @@ public class KeyExpander {
         temp = changeByteBasedOnSbox(temp);
         xorSum(temp);
         //etap 4
-        xorSum(getLast4Bytes());
-        if (originalKey.size() != 176) {
-            expand(++iteration);
+        for (int i = 0; i < 3; i++) {
+            xorSum(getLast4Bytes());
+        }
+        System.out.println(originalKey.size());
+        if (originalKey.size() < 240) {
+            expand(iteration++);
             return;
         }
         System.out.println(originalKey);
