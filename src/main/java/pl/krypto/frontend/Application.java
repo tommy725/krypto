@@ -16,6 +16,8 @@ public class Application extends javafx.application.Application {
         stage.setTitle(MAIN_FORM_TITLE);
         stage.setScene(scene);
         stage.show();
+        KeyExpander ke = new KeyExpander("0123456789ABCDEF0123456789ABCDEz".getBytes());
+        ke.expand(1);
     }
 
     public static void main(String[] args) {
