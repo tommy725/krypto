@@ -12,6 +12,8 @@ import pl.krypto.backend.Validator;
 import pl.krypto.backend.KeyGenerator;
 import pl.krypto.backend.RandomGenerator;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
@@ -20,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HexFormat;
 import java.util.List;
 
 public class MainFormController {
@@ -89,7 +92,9 @@ public class MainFormController {
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
             cryptData = Files.readAllBytes(p);
-            cryptogram.setText(byteArrayToString(cryptData));
+            byte[] base64 = Base64.getEncoder().encode(cryptData);
+            String s = new String(base64);
+            cryptogram.setText(s);
         }
     }
 
@@ -146,6 +151,7 @@ public class MainFormController {
     }
 
     public void encrypt() {
+        cryptogram.setText("");
         Validator v = new Validator();
         if(v.validatePassword(key.getText()) != null) {
             return;
@@ -153,13 +159,19 @@ public class MainFormController {
         KeyExpander ke = new KeyExpander(key.getText().getBytes());
         List<Byte> key = ke.expand(1);
         Encryptor e = new Encryptor(key);
-        byte[] cryptBytes = e.encrypt(plainText.getText().getBytes());
-        byte[] base64 = Base64.getEncoder().encode(cryptBytes);
+        byte[] cryptBytes = null;
+        if (plainData != null) {
+            cryptBytes = e.encrypt(plainData);
+        }
+        byte[] cryptBytesText = e.encrypt(plainText.getText().getBytes());
+        byte[] base64 = Base64.getEncoder().encode(cryptBytesText);
         String s = new String(base64);
+        cryptData = cryptBytes;
         cryptogram.setText(s);
     }
 
     public void decrypt() {
+        plainText.setText("");
         Validator v = new Validator();
         if(v.validatePassword(key.getText()) != null) {
             return;
@@ -168,8 +180,13 @@ public class MainFormController {
         List<Byte> key = ke.expand(1);
         Decryptor d = new Decryptor(key);
         byte[] base64 = Base64.getDecoder().decode(cryptogram.getText().getBytes());
-        byte[] cryptBytes = d.decrypt(base64);
-        String s = new String(cryptBytes, StandardCharsets.UTF_8);
+        byte[] decryptbase64 = d.decrypt(base64);
+        byte[] cryptBytes = null;
+        if (cryptData != null) {
+            cryptBytes = d.decrypt(cryptData);
+        }
+        String s = new String(decryptbase64);
+        plainData = cryptBytes;
         plainText.setText(s);
     }
 
