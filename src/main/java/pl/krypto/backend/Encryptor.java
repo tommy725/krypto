@@ -6,31 +6,36 @@ import java.util.HexFormat;
 import java.util.List;
 
 public class Encryptor {
-    private List<Byte> result = new ArrayList<>();
-    private ByteArrayOperator bao = new ByteArrayOperator();
     private List<Byte> key;
+    private ByteArrayOperator bao = new ByteArrayOperator();
 
     public Encryptor(List<Byte> key) {
         this.key = key;
     }
 
     public byte[] encrypt(byte[] data) {
-        KeyExpander ke = new KeyExpander("0123456789ABCDEF0123456789ABCDEF".getBytes());
-        List<Byte> key = ke.expand(1);
         HexFormat hf = HexFormat.of().withDelimiter(" ");
         System.out.println("START: " + hf.formatHex(data));
-        byte[] block = encryptInitRound(data, key);
-        for (int i = 0; i < 13; i++) {
-            block = encryptCenterRound(block, key, i + 1);
-            for (int j = 0; j < 16; j++) {
-                result.add(block[j]);
+        System.out.println("LONGER: " + hf.formatHex(data));
+        data = bao.addToLastFor16Bytes(data);
+        byte[] result = new byte[data.length];
+        for (int blockNumber = 0; blockNumber < data.length / 16; blockNumber++) {
+            byte[] block = bao.getBlock(blockNumber, data);
+            System.out.println("BLOCK: " + hf.formatHex(block));
+            block = encryptInitRound(block, key);
+            for (int i = 0; i < 13; i++) {
+                block = encryptCenterRound(block, key, i + 1);
+            }
+            byte[] cryptogram = encryptEndRound(block, key);
+            System.out.println("===========================================");
+            System.out.println("BLOCK CRYPTOGRAM: " + hf.formatHex(cryptogram));
+            System.out.println("===========================================");
+            for (int i = 0; i < 16; i++) {
+                result[16 * blockNumber + i] = cryptogram[i];
             }
         }
-        byte[] cryptogram = encryptEndRound(block, key);
-        System.out.println("===========================================");
-        System.out.println("CRYPTOGRAM: " + hf.formatHex(cryptogram));
-        System.out.println("===========================================");
-        return cryptogram;
+        System.out.println("CRYPTOGRAM " + hf.formatHex(result));
+        return result;
     }
 
     private byte[] encryptInitRound(byte[] data, List<Byte> key) {
@@ -65,13 +70,5 @@ public class Encryptor {
         temp = bao.addRoundKey(temp, bao.get16bytesKeyFragment(14, key));
         System.out.println("AddRoundKey: I=14 (END ROUND) " + hf.formatHex(temp));
         return temp;
-    }
-
-    private void addToResult(byte[] add) {
-        for (byte b : add) {
-            result.add(b);
-        }
-        HexFormat hf = HexFormat.of().withDelimiter(" ");
-        System.out.println(hf.formatHex(add));
     }
 }

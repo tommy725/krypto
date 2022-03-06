@@ -1,7 +1,6 @@
 package pl.krypto.backend;
 
 import java.util.ArrayList;
-import java.util.HexFormat;
 import java.util.List;
 
 public class ByteArrayOperator {
@@ -18,6 +17,41 @@ public class ByteArrayOperator {
     public ByteArrayOperator() {
     }
 
+    public byte[] addToLastFor16Bytes(byte[] original) {
+        int lastBlockBytesNumber = original.length % 16;
+        if (lastBlockBytesNumber == 0) {
+            return original;
+        }
+        int bytesToAdd = 16 - lastBlockBytesNumber;
+        byte[] longer = new byte[original.length + bytesToAdd];
+        System.arraycopy(original, 0, longer, 0, original.length);
+        for (int i = original.length; i < original.length + bytesToAdd; i++) {
+            longer[i] = 0x00;
+        }
+        return longer;
+    }
+
+    public byte[] remove00fromEnd(byte[] original) {
+        int numOf0 = 0;
+        for (int i = original.length - 1; i >= original.length - 16; i--) {
+            if (original[i] != 0) break;
+            numOf0++;
+        }
+        byte[] shorter = new byte[original.length - numOf0];
+        for (int i = 0; i < original.length - numOf0; i++) {
+            shorter[i] = original[i];
+        }
+        return shorter;
+    }
+
+    public byte[] getBlock(int number, byte[] data) {
+        byte[] temp = new byte[16];
+        for (int i = 0; i < 16; i++) {
+            temp[i] = data[number * 16 + i];
+        }
+        return temp;
+    }
+
     public byte[] rotate1Left(byte[] original) {
         byte[] rotate = new byte[4];
         rotate[0] = original[1];
@@ -25,15 +59,6 @@ public class ByteArrayOperator {
         rotate[2] = original[3];
         rotate[3] = original[0];
         return rotate;
-    }
-
-    public byte[] changeByteBasedOnSbox(byte[] temp) {
-        for (int i = 0; i < 4; i++) {
-            int intFromByte = temp[i];
-            if (intFromByte < 0) intFromByte += 256;
-            temp[i] = (byte) SBox.getBox(intFromByte / 16, intFromByte % 16);
-        }
-        return temp;
     }
 
     public byte[] rconOperation(int iteration) {
@@ -66,10 +91,11 @@ public class ByteArrayOperator {
         return temp;
     }
 
-    public byte[] get4BytesArray(int start, byte[] array) {
-        byte[] temp = new byte[4];
+    public byte[] changeByteBasedOnSbox(byte[] temp) {
         for (int i = 0; i < 4; i++) {
-            temp[i] = array[array.length - start + i];
+            int intFromByte = temp[i];
+            if (intFromByte < 0) intFromByte += 256;
+            temp[i] = (byte) SBox.getBox(intFromByte / 16, intFromByte % 16);
         }
         return temp;
     }
@@ -117,7 +143,7 @@ public class ByteArrayOperator {
         return result;
     }
 
-    public byte[] shiftRowsRight(byte[] array) {
+    public byte[] invShiftRows(byte[] array) {
         byte[] result = new byte[16];
         //row 1
         result[0] = array[0];
@@ -143,7 +169,6 @@ public class ByteArrayOperator {
     }
 
     public byte[] mixColumns(byte[] array) {
-        HexFormat hf = HexFormat.of().withDelimiter(" ");
         byte[] result = new byte[16];
         for (int i = 0; i < 16; i++) {
             int row = i % 4;

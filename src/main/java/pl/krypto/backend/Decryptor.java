@@ -1,5 +1,6 @@
 package pl.krypto.backend;
 
+import java.time.format.ResolverStyle;
 import java.util.HexFormat;
 import java.util.List;
 
@@ -13,17 +14,26 @@ public class Decryptor {
 
     public byte[] decrypt(byte[] crypt) {
         HexFormat hf = HexFormat.of().withDelimiter(" ");
-        byte[] block;
         System.out.println("START: " + hf.formatHex(crypt));
-        block = decryptInitRound(crypt, key);
-        for (int i = 13; i > 0; i--) {
-            block = decryptCenterRound(block, key, i);
+        byte[] result = new byte[crypt.length];
+        for (int blockNumber = 0; blockNumber < crypt.length / 16; blockNumber++) {
+            byte[] block = bao.getBlock(blockNumber, crypt);
+            block = decryptInitRound(block, key);
+            for (int i = 13; i > 0; i--) {
+                block = decryptCenterRound(block, key, i);
+            }
+            block = decryptEndRound(block, key);
+            System.out.println("===========================================");
+            System.out.println("PLAIN TEXT: " + hf.formatHex(block));
+            System.out.println("===========================================");
+            for (int i = 0; i < 16; i++) {
+                result[16 * blockNumber + i] = block[i];
+            }
         }
-        block = decryptEndRound(block, key);
-        System.out.println("===========================================");
-        System.out.println("PLAIN TEXT: " + hf.formatHex(block));
-        System.out.println("===========================================");
-        return block;
+        System.out.println("DECODED PLAN TEXT LONGER: " + hf.formatHex(result));
+        result = bao.remove00fromEnd(result);
+        System.out.println("DECODED PLAN TEXT 0 REMOVED: " + hf.formatHex(result));
+        return result;
     }
 
     private byte[] decryptInitRound(byte[] data, List<Byte> key) {
@@ -31,7 +41,7 @@ public class Decryptor {
         byte[] temp;
         temp = bao.addRoundKey(data, bao.get16bytesKeyFragment(14, key));
         System.out.println("AddRoundKey: I=0 (INIT ROUND) " + hf.formatHex(temp));
-        temp = bao.shiftRowsRight(temp);
+        temp = bao.invShiftRows(temp);
         System.out.println("InvShiftRows: I=0 (INIT ROUND) " + hf.formatHex(temp));
         temp = bao.changeByteBasedOnInvSbox16(temp);
         System.out.println("InvSubBytes: I=0 (INIT ROUND) " + hf.formatHex(temp));
@@ -45,7 +55,7 @@ public class Decryptor {
         System.out.println("AddRoundKey: I=" + (14 - iteration) + " " + hf.formatHex(temp));
         temp = bao.invMixColumns(temp);
         System.out.println("InvMixColumns: I=" + (14 - iteration) + " " + hf.formatHex(temp));
-        temp = bao.shiftRowsRight(temp);
+        temp = bao.invShiftRows(temp);
         System.out.println("InvShiftRows: I=" + (14 - iteration) + " " + hf.formatHex(temp));
         temp = bao.changeByteBasedOnInvSbox16(temp);
         System.out.println("InvSubBytes: I=" + (14 - iteration) + " " + hf.formatHex(temp));
