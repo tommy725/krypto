@@ -152,7 +152,6 @@ public class ByteArrayOperator {
             for (int j = 0; j < 4; j++) {
                 int dec = array[col * 4 + j];
                 int mul = mds[row * 4 + j];
-                System.out.println(dec + "*" + mul);
                 if (mul == 3) {
                     mul = 2;
                 }
@@ -193,17 +192,17 @@ public class ByteArrayOperator {
                 //System.out.println(dec + "*" + mul);
                 if (mul == 9) {
                     value = dec * 2;
-                    if (value > 255){
+                    if (value > 255) {
                         value = value ^ 0x1B;
                         value = value - 256;
                     }
                     value = value * 2;
-                    if (value > 255){
+                    if (value > 255) {
                         value = value ^ 0x1B;
                         value = value - 256;
                     }
                     value = value * 2;
-                    if (value > 255){
+                    if (value > 255) {
                         value = value ^ 0x1B;
                         value = value - 256;
                     }
@@ -211,18 +210,18 @@ public class ByteArrayOperator {
                 }
                 if (mul == 11) {
                     value = dec * 2;
-                    if (value > 255){
+                    if (value > 255) {
                         value = value ^ 0x1B;
                         value = value - 256;
                     }
                     value = value * 2;
-                    if (value > 255){
+                    if (value > 255) {
                         value = value ^ 0x1B;
                         value = value - 256;
                     }
                     value = value ^ dec;
                     value = value * 2;
-                    if (value > 255){
+                    if (value > 255) {
                         value = value ^ 0x1B;
                         value = value - 256;
                     }
@@ -230,18 +229,18 @@ public class ByteArrayOperator {
                 }
                 if (mul == 13) {
                     value = dec * 2;
-                    if (value > 255){
+                    if (value > 255) {
                         value = value ^ 0x1B;
                         value = value - 256;
                     }
                     value = value ^ dec;
                     value = value * 2;
-                    if (value > 255){
+                    if (value > 255) {
                         value = value ^ 0x1B;
                         value = value - 256;
                     }
                     value = value * 2;
-                    if (value > 255){
+                    if (value > 255) {
                         value = value ^ 0x1B;
                         value = value - 256;
                     }
@@ -249,19 +248,19 @@ public class ByteArrayOperator {
                 }
                 if (mul == 14) {
                     value = dec * 2;
-                    if (value > 255){
+                    if (value > 255) {
                         value = value ^ 0x1B;
                         value = value - 256;
                     }
                     value = value ^ dec;
                     value = value * 2;
-                    if (value > 255){
+                    if (value > 255) {
                         value = value ^ 0x1B;
                         value = value - 256;
                     }
                     value = value ^ dec;
                     value = value * 2;
-                    if (value > 255){
+                    if (value > 255) {
                         value = value ^ 0x1B;
                         value = value - 256;
                     }
@@ -273,7 +272,7 @@ public class ByteArrayOperator {
         return result;
     }
 
-    public byte[] addRoundKey(byte[] array,List<Byte> key) {
+    public byte[] addRoundKey(byte[] array, List<Byte> key) {
         byte[] result = new byte[16];
         for (int i = 0; i < 16; i++) {
             result[i] = (byte) (array[i] ^ key.get(i));
@@ -284,7 +283,7 @@ public class ByteArrayOperator {
     public List<Byte> get16bytesKeyFragment(int iteration, List<Byte> key) {
         List<Byte> result = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            result.add(key.get(iteration*16+i));
+            result.add(key.get(iteration * 16 + i));
         }
         return result;
     }

@@ -37,7 +37,6 @@ public class KeyExpander {
             temp = bao.get4Bytes(4,originalKey); //4.1 get last 4 bytes of key
             addToKey(bao.xor(temp,bao.get4Bytes(32,originalKey))); //4.2.1 xor of 4.1 and 4 bytes starting from -32 and adding to key
         }
-        System.out.println("===========");
         if (originalKey.size() < 240) {
             return expand(++iteration);
         }
@@ -49,6 +48,5 @@ public class KeyExpander {
             originalKey.add(b);
         }
         HexFormat hf = HexFormat.of().withDelimiter(" ");
-        System.out.println(hf.formatHex(add));
     }
 }

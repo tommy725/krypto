@@ -2,10 +2,13 @@ package pl.krypto.frontend;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import pl.krypto.backend.Decryptor;
 import pl.krypto.backend.Encryptor;
+import pl.krypto.backend.KeyExpander;
+import pl.krypto.backend.Validator;
 import pl.krypto.backend.KeyGenerator;
 import pl.krypto.backend.RandomGenerator;
 
@@ -143,18 +146,28 @@ public class MainFormController {
     }
 
     public void encrypt() {
-        Encryptor e = new Encryptor();
+        Validator v = new Validator();
+        if(v.validatePassword(key.getText()) != null) {
+            return;
+        }
+        KeyExpander ke = new KeyExpander(key.getText().getBytes());
+        List<Byte> key = ke.expand(1);
+        Encryptor e = new Encryptor(key);
         byte[] cryptBytes = e.encrypt(plainText.getText().getBytes());
-        System.out.println(Arrays.toString(cryptBytes));
         byte[] base64 = Base64.getEncoder().encode(cryptBytes);
         String s = new String(base64);
         cryptogram.setText(s);
     }
 
     public void decrypt() {
-        Decryptor d = new Decryptor();
+        Validator v = new Validator();
+        if(v.validatePassword(key.getText()) != null) {
+            return;
+        }
+        KeyExpander ke = new KeyExpander(key.getText().getBytes());
+        List<Byte> key = ke.expand(1);
+        Decryptor d = new Decryptor(key);
         byte[] base64 = Base64.getDecoder().decode(cryptogram.getText().getBytes());
-        System.out.println(Arrays.toString(base64));
         byte[] cryptBytes = d.decrypt(base64);
         String s = new String(cryptBytes, StandardCharsets.UTF_8);
         plainText.setText(s);
