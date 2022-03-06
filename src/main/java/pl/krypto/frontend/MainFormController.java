@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 public class MainFormController {
@@ -145,16 +146,16 @@ public class MainFormController {
         Encryptor e = new Encryptor();
         byte[] cryptBytes = e.encrypt(plainText.getText().getBytes());
         System.out.println(Arrays.toString(cryptBytes));
-        String s = new String(cryptBytes, StandardCharsets.UTF_16);
+        byte[] base64 = Base64.getEncoder().encode(cryptBytes);
+        String s = new String(base64);
         cryptogram.setText(s);
     }
 
     public void decrypt() {
         Decryptor d = new Decryptor();
-        byte[] textBytes = cryptogram.getText().getBytes(StandardCharsets.UTF_16);
-        byte[] bytes = Arrays.copyOfRange(textBytes,2,textBytes.length);
-        byte[] cryptBytes = d.decrypt(bytes);
-        System.out.println(Arrays.toString(cryptBytes));
+        byte[] base64 = Base64.getDecoder().decode(cryptogram.getText().getBytes());
+        System.out.println(Arrays.toString(base64));
+        byte[] cryptBytes = d.decrypt(base64);
         String s = new String(cryptBytes, StandardCharsets.UTF_8);
         plainText.setText(s);
     }

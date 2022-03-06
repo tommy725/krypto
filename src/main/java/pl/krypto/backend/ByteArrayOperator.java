@@ -10,6 +10,11 @@ public class ByteArrayOperator {
             0x01, 0x01, 0x02, 0x03,
             0x03, 0x01, 0x01, 0x02};
 
+    static byte[] invmds = {0x0e, 0x0b, 0x0d, 0x09,
+            0x09, 0x0e, 0x0b, 0x0d,
+            0x0d, 0x09, 0x0e, 0x0b,
+            0x0b, 0x0d, 0x09, 0x0e};
+
     public ByteArrayOperator() {
     }
 
@@ -130,10 +135,10 @@ public class ByteArrayOperator {
         result[6] = array[14];
         result[2] = array[10];
         //row 4
-        result[15] = array[11];
-        result[11] = array[7];
-        result[7] = array[3];
-        result[3] = array[15];
+        result[11] = array[15];
+        result[7] = array[11];
+        result[3] = array[7];
+        result[15] = array[3];
         return result;
     }
 
@@ -147,6 +152,7 @@ public class ByteArrayOperator {
             for (int j = 0; j < 4; j++) {
                 int dec = array[col * 4 + j];
                 int mul = mds[row * 4 + j];
+                System.out.println(dec + "*" + mul);
                 if (mul == 3) {
                     mul = 2;
                 }
@@ -162,6 +168,102 @@ public class ByteArrayOperator {
                         value = value ^ dec ^ 0x1B;
                     } else {
                         value = value ^ dec;
+                    }
+                }
+                temp[j] = (byte) value;
+            }
+            result[i] = xorMix(temp);
+        }
+        return result;
+    }
+
+    public byte[] invMixColumns(byte[] array) {
+        byte[] result = new byte[16];
+        for (int i = 0; i < 16; i++) {
+            int row = i % 4;
+            int col = i / 4;
+            byte[] temp = new byte[4];
+            for (int j = 0; j < 4; j++) {
+                int dec = array[col * 4 + j];
+                int mul = invmds[row * 4 + j];
+                int value = 0;
+                if (dec < 0) {
+                    dec += 256;
+                }
+                //System.out.println(dec + "*" + mul);
+                if (mul == 9) {
+                    value = dec * 2;
+                    if (value > 255){
+                        value = value ^ 0x1B;
+                        value = value - 256;
+                    }
+                    value = value * 2;
+                    if (value > 255){
+                        value = value ^ 0x1B;
+                        value = value - 256;
+                    }
+                    value = value * 2;
+                    if (value > 255){
+                        value = value ^ 0x1B;
+                        value = value - 256;
+                    }
+                    value = value ^ dec;
+                }
+                if (mul == 11) {
+                    value = dec * 2;
+                    if (value > 255){
+                        value = value ^ 0x1B;
+                        value = value - 256;
+                    }
+                    value = value * 2;
+                    if (value > 255){
+                        value = value ^ 0x1B;
+                        value = value - 256;
+                    }
+                    value = value ^ dec;
+                    value = value * 2;
+                    if (value > 255){
+                        value = value ^ 0x1B;
+                        value = value - 256;
+                    }
+                    value = value ^ dec;
+                }
+                if (mul == 13) {
+                    value = dec * 2;
+                    if (value > 255){
+                        value = value ^ 0x1B;
+                        value = value - 256;
+                    }
+                    value = value ^ dec;
+                    value = value * 2;
+                    if (value > 255){
+                        value = value ^ 0x1B;
+                        value = value - 256;
+                    }
+                    value = value * 2;
+                    if (value > 255){
+                        value = value ^ 0x1B;
+                        value = value - 256;
+                    }
+                    value = value ^ dec;
+                }
+                if (mul == 14) {
+                    value = dec * 2;
+                    if (value > 255){
+                        value = value ^ 0x1B;
+                        value = value - 256;
+                    }
+                    value = value ^ dec;
+                    value = value * 2;
+                    if (value > 255){
+                        value = value ^ 0x1B;
+                        value = value - 256;
+                    }
+                    value = value ^ dec;
+                    value = value * 2;
+                    if (value > 255){
+                        value = value ^ 0x1B;
+                        value = value - 256;
                     }
                 }
                 temp[j] = (byte) value;
