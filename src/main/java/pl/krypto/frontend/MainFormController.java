@@ -3,6 +3,7 @@ package pl.krypto.frontend;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import pl.krypto.backend.Decryptor;
@@ -34,6 +35,11 @@ public class MainFormController {
     public TextField key;
     public TextArea plainText;
     public TextArea cryptogram;
+    public Button save1;
+    public Button save2;
+    public Button reset;
+    public Button encrypt;
+    public Button decrypt;
 
     private byte[] plainData;
     private byte[] cryptData;
@@ -56,7 +62,15 @@ public class MainFormController {
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
             plainData = Files.readAllBytes(p);
+            plainText.setText("");
+            plainText.setText("");
             plainText.setText(byteArrayToString(plainData));
+            save1.setDisable(false);
+            save2.setDisable(false);
+            reset.setDisable(false);
+            plainText.setDisable(true);
+            cryptogram.setDisable(true);
+            decrypt.setDisable(true);
         }
     }
 
@@ -91,10 +105,16 @@ public class MainFormController {
                 false,actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
+            plainText.setText("");
+            cryptogram.setText("");
             cryptData = Files.readAllBytes(p);
-            byte[] base64 = Base64.getEncoder().encode(cryptData);
-            String s = new String(base64);
-            cryptogram.setText(s);
+            cryptogram.setText(byteArrayToString(cryptData));
+            save1.setDisable(false);
+            save2.setDisable(false);
+            reset.setDisable(false);
+            plainText.setDisable(true);
+            cryptogram.setDisable(true);
+            encrypt.setDisable(true);
         }
     }
 
@@ -150,7 +170,23 @@ public class MainFormController {
         }
     }
 
-    public void encrypt() {
+    public void reset(ActionEvent actionEvent) {
+        plainData = null;
+        cryptData = null;
+        plainText.setText("");
+        cryptogram.setText("");
+        save1.setDisable(true);
+        save2.setDisable(true);
+        reset.setDisable(true);
+        plainText.setDisable(false);
+        cryptogram.setDisable(false);
+        decrypt.setDisable(false);
+        encrypt.setDisable(false);
+    }
+
+
+    public void encrypt() throws IOException {
+        decrypt.setDisable(false);
         cryptogram.setText("");
         Validator v = new Validator();
         if(v.validatePassword(key.getText()) != null) {
@@ -162,15 +198,18 @@ public class MainFormController {
         byte[] cryptBytes = null;
         if (plainData != null) {
             cryptBytes = e.encrypt(plainData);
+            cryptData = cryptBytes;
+            cryptogram.setText(byteArrayToString(cryptBytes));
+        } else {
+            cryptBytes = e.encrypt(plainText.getText().getBytes());
+            byte[] base64 = Base64.getEncoder().encode(cryptBytes);
+            String s = new String(base64);
+            cryptogram.setText(s);
         }
-        byte[] cryptBytesText = e.encrypt(plainText.getText().getBytes());
-        byte[] base64 = Base64.getEncoder().encode(cryptBytesText);
-        String s = new String(base64);
-        cryptData = cryptBytes;
-        cryptogram.setText(s);
     }
 
-    public void decrypt() {
+    public void decrypt() throws IOException {
+        encrypt.setDisable(false);
         plainText.setText("");
         Validator v = new Validator();
         if(v.validatePassword(key.getText()) != null) {
@@ -179,15 +218,21 @@ public class MainFormController {
         KeyExpander ke = new KeyExpander(key.getText().getBytes());
         List<Byte> key = ke.expand(1);
         Decryptor d = new Decryptor(key);
-        byte[] base64 = Base64.getDecoder().decode(cryptogram.getText().getBytes());
-        byte[] decryptbase64 = d.decrypt(base64);
         byte[] cryptBytes = null;
         if (cryptData != null) {
             cryptBytes = d.decrypt(cryptData);
+            plainData = cryptBytes;
+            plainText.setText(byteArrayToString(cryptBytes));
+        } else {
+            byte[] base64 = Base64.getDecoder().decode(cryptogram.getText().getBytes());
+            cryptBytes = d.decrypt(base64);
+            String s = new String(cryptBytes);
+            plainText.setText(s);
+            //byte[] base64 = Base64.getDecoder().decode(cryptogram.getText().getBytes());
+            //byte[] decryptbase64 = d.decrypt(base64);
         }
-        String s = new String(decryptbase64);
-        plainData = cryptBytes;
-        plainText.setText(s);
+
+
     }
 
     /**
