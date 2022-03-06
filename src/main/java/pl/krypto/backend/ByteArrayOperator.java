@@ -25,7 +25,8 @@ public class ByteArrayOperator {
         int bytesToAdd = 16 - lastBlockBytesNumber;
         byte[] longer = new byte[original.length + bytesToAdd];
         System.arraycopy(original, 0, longer, 0, original.length);
-        for (int i = original.length; i < original.length + bytesToAdd; i++) {
+        longer[original.length] = (byte) 0xFF;
+        for (int i = original.length + 1; i < original.length + bytesToAdd; i++) {
             longer[i] = 0x00;
         }
         return longer;
@@ -36,6 +37,13 @@ public class ByteArrayOperator {
         for (int i = original.length - 1; i >= original.length - 16; i--) {
             if (original[i] != 0) break;
             numOf0++;
+        }
+        if (numOf0 != 0) {
+            numOf0++;
+        } else {
+            if (original[original.length-1] == (byte) 0xFF) {
+                numOf0++;
+            }
         }
         byte[] shorter = new byte[original.length - numOf0];
         for (int i = 0; i < original.length - numOf0; i++) {
