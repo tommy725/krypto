@@ -36,10 +36,22 @@ public class SBox {
             0xa0, 0xe0, 0x3b, 0x4d, 0xae, 0x2a, 0xf5, 0xb0, 0xc8, 0xeb, 0xbb, 0x3c, 0x83, 0x53, 0x99, 0x61,
             0x17, 0x2b, 0x04, 0x7e, 0xba, 0x77, 0xd6, 0x26, 0xe1, 0x69, 0x14, 0x63, 0x55, 0x21, 0x0c, 0x7d};
 
+    /**
+     * Returns sbox of given coordinates
+     * @param i row
+     * @param j column
+     * @return sbox value
+     */
     public static int getBox(int i,int j) {
         return box[i*16+j];
     }
 
+    /**
+     * Returns invsbox of given coordinates
+     * @param i row
+     * @param j column
+     * @return invsbox value
+     */
     public static int getInvBox(int i,int j) {
         return invBox[i*16+j];
     }

@@ -2,28 +2,20 @@ package pl.krypto.frontend;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import pl.krypto.backend.Decryptor;
 import pl.krypto.backend.Encryptor;
 import pl.krypto.backend.KeyExpander;
-import pl.krypto.backend.Validator;
 import pl.krypto.backend.KeyGenerator;
-import pl.krypto.backend.RandomGenerator;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Base64;
-import java.util.HexFormat;
 import java.util.List;
 
 public class MainFormController {
@@ -44,108 +36,104 @@ public class MainFormController {
     private byte[] plainData;
     private byte[] cryptData;
 
+    /**
+     * Set generated key to key textField
+     */
     public void generateKey() {
         key.setText(KeyGenerator.generateKey());
     }
 
     /**
      * Method reads plain byte array from given file
+     *
      * @param actionEvent eventFromJavaFX
      * @throws InvocationTargetException exception
-     * @throws NoSuchMethodException exception
-     * @throws IllegalAccessException exception
-     * @throws IOException exception
+     * @throws NoSuchMethodException     exception
+     * @throws IllegalAccessException    exception
+     * @throws IOException               exception
      */
     public void readFromFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
             IllegalAccessException, IOException {
-        String strPath = FileChoose.openChooser("Choose a file to encrypt",false,actionEvent);
+        String strPath = FileChoose.openChooser("Choose a file to encrypt", false, actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
             plainData = Files.readAllBytes(p);
-            plainText.setText("");
-            plainText.setText("");
+            clearTextFields();
             plainText.setText(byteArrayToString(plainData));
-            save1.setDisable(false);
-            save2.setDisable(false);
-            reset.setDisable(false);
-            plainText.setDisable(true);
-            cryptogram.setDisable(true);
-            decrypt.setDisable(true);
+            changeDisableAfterRead();
         }
     }
 
     /**
      * Method saves plain byte array to file
+     *
      * @param actionEvent eventFromJavaFX
      * @throws InvocationTargetException exception
-     * @throws NoSuchMethodException exception
-     * @throws IllegalAccessException exception
-     * @throws IOException exception
+     * @throws NoSuchMethodException     exception
+     * @throws IllegalAccessException    exception
+     * @throws IOException               exception
      */
     public void writeToFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
             IllegalAccessException, IOException {
-        String strPath = FileChoose.saveChooser("Choose a file to encrypt",false,actionEvent);
+        String strPath = FileChoose.saveChooser("Choose a file to encrypt", false, actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
-            Files.write(p,plainData);
+            Files.write(p, plainData);
         }
     }
 
     /**
      * Method reads encrypted byte array from given file
+     *
      * @param actionEvent eventFromJavaFX
      * @throws InvocationTargetException exception
-     * @throws NoSuchMethodException exception
-     * @throws IllegalAccessException exception
-     * @throws IOException exception
+     * @throws NoSuchMethodException     exception
+     * @throws IllegalAccessException    exception
+     * @throws IOException               exception
      */
     public void readFromFileEncrypted(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
             IllegalAccessException, IOException {
         String strPath = FileChoose.openChooser("Choose an encrypted file to decrypt",
-                false,actionEvent);
+                false, actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
-            plainText.setText("");
-            cryptogram.setText("");
             cryptData = Files.readAllBytes(p);
+            clearTextFields();
             cryptogram.setText(byteArrayToString(cryptData));
-            save1.setDisable(false);
-            save2.setDisable(false);
-            reset.setDisable(false);
-            plainText.setDisable(true);
-            cryptogram.setDisable(true);
-            encrypt.setDisable(true);
+            changeDisableAfterRead();
         }
     }
 
     /**
      * Method saves encrypted byte array to file
+     *
      * @param actionEvent eventFromJavaFX
      * @throws InvocationTargetException exception
-     * @throws NoSuchMethodException exception
-     * @throws IllegalAccessException exception
-     * @throws IOException exception
+     * @throws NoSuchMethodException     exception
+     * @throws IllegalAccessException    exception
+     * @throws IOException               exception
      */
     public void writeToFileEncrypted(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
             IllegalAccessException, IOException {
-        String strPath = FileChoose.saveChooser("Choose a file to encrypt",false,actionEvent);
+        String strPath = FileChoose.saveChooser("Choose a file to encrypt", false, actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
-            Files.write(p,cryptData);
+            Files.write(p, cryptData);
         }
     }
 
     /**
      * Method reads key from given file
+     *
      * @param actionEvent eventFromJavaFX
      * @throws InvocationTargetException exception
-     * @throws NoSuchMethodException exception
-     * @throws IllegalAccessException exception
-     * @throws IOException exception
+     * @throws NoSuchMethodException     exception
+     * @throws IllegalAccessException    exception
+     * @throws IOException               exception
      */
     public void readKeyFromFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
             IllegalAccessException, IOException {
-        String strPath = FileChoose.openChooser("Choose a file to save a key",true,actionEvent);
+        String strPath = FileChoose.openChooser("Choose a file to save a key", true, actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
             key.setText(new String(Files.readAllBytes(p)));
@@ -154,27 +142,30 @@ public class MainFormController {
 
     /**
      * Method saves key to given file
+     *
      * @param actionEvent eventFromJavaFX
      * @throws InvocationTargetException exception
-     * @throws NoSuchMethodException exception
-     * @throws IllegalAccessException exception
-     * @throws IOException exception
+     * @throws NoSuchMethodException     exception
+     * @throws IllegalAccessException    exception
+     * @throws IOException               exception
      */
     public void writeKeyToFile(ActionEvent actionEvent) throws InvocationTargetException, NoSuchMethodException,
             IllegalAccessException, IOException {
-        String strPath = FileChoose.saveChooser("Choose a file with key",true,actionEvent);
+        String strPath = FileChoose.saveChooser("Choose a file with key", true, actionEvent);
         if (!strPath.equals("")) {
             Path p = Paths.get(strPath);
             String passwd = key.getText();
-            Files.write(p,passwd.getBytes());
+            Files.write(p, passwd.getBytes());
         }
     }
 
-    public void reset(ActionEvent actionEvent) {
+    /**
+     * Methods resets file and able to insert text
+     */
+    public void reset() {
         plainData = null;
         cryptData = null;
-        plainText.setText("");
-        cryptogram.setText("");
+        clearTextFields();
         save1.setDisable(true);
         save2.setDisable(true);
         reset.setDisable(true);
@@ -185,17 +176,16 @@ public class MainFormController {
     }
 
 
-    public void encrypt() throws IOException {
+    /**
+     * Method to start encryption from GUI and return result on textField and cryptData
+     */
+    public void encrypt() {
         decrypt.setDisable(false);
         cryptogram.setText("");
-        Validator v = new Validator();
-        if(v.validatePassword(key.getText()) != null) {
-            return;
-        }
-        KeyExpander ke = new KeyExpander(key.getText().getBytes());
-        List<Byte> key = ke.expand(1);
+        List<Byte> key = expandKey();
+        if (key == null) return;
         Encryptor e = new Encryptor(key);
-        byte[] cryptBytes = null;
+        byte[] cryptBytes;
         if (plainData != null) {
             cryptBytes = e.encrypt(plainData);
             cryptData = cryptBytes;
@@ -208,17 +198,16 @@ public class MainFormController {
         }
     }
 
-    public void decrypt() throws IOException {
+    /**
+     * Method to start decryption from GUI and return result on textField and to plainData
+     */
+    public void decrypt() {
         encrypt.setDisable(false);
         plainText.setText("");
-        Validator v = new Validator();
-        if(v.validatePassword(key.getText()) != null) {
-            return;
-        }
-        KeyExpander ke = new KeyExpander(key.getText().getBytes());
-        List<Byte> key = ke.expand(1);
+        List<Byte> key = expandKey();
+        if (key == null) return;
         Decryptor d = new Decryptor(key);
-        byte[] cryptBytes = null;
+        byte[] cryptBytes;
         if (cryptData != null) {
             cryptBytes = d.decrypt(cryptData);
             plainData = cryptBytes;
@@ -228,23 +217,53 @@ public class MainFormController {
             cryptBytes = d.decrypt(base64);
             String s = new String(cryptBytes);
             plainText.setText(s);
-            //byte[] base64 = Base64.getDecoder().decode(cryptogram.getText().getBytes());
-            //byte[] decryptbase64 = d.decrypt(base64);
         }
+    }
 
-
+    /**
+     * Expands key to desired length;
+     * @return expanded key
+     */
+    private List<Byte> expandKey() {
+        Validator v = new Validator();
+        if (v.validatePassword(key.getText()) != null) {
+            return null;
+        }
+        KeyExpander ke = new KeyExpander(key.getText().getBytes());
+        return ke.expand(1);
     }
 
     /**
      * Method converts byte array to string
+     *
      * @param data byteArray
      * @return String
      */
     private String byteArrayToString(byte[] data) {
         StringBuilder buffer = new StringBuilder();
         for (byte b : data) {
-            buffer.append((char)b);
+            buffer.append((char) b);
         }
         return buffer.toString();
+    }
+
+    /**
+     * Methods clear textFields
+     */
+    private void clearTextFields() {
+        plainText.setText("");
+        cryptogram.setText("");
+    }
+
+    /**
+     * Method disables components not connected with file
+     */
+    private void changeDisableAfterRead() {
+        save1.setDisable(false);
+        save2.setDisable(false);
+        reset.setDisable(false);
+        plainText.setDisable(true);
+        cryptogram.setDisable(true);
+        decrypt.setDisable(true);
     }
 }
