@@ -307,10 +307,9 @@ public class ByteArrayOperator {
                     value = value ^ REDUCTION;
                 }
                 if (mds[row * ROWSIZE + j] == 3) {
+                    value = value ^ dec;
                     if (value > 255) {
-                        value = value ^ dec ^ REDUCTION;
-                    } else {
-                        value = value ^ dec;
+                        value = value ^ 0x1B;
                     }
                 }
                 temp[j] = (byte) value;
