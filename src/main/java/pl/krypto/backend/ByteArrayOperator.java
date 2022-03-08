@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ByteArrayOperator {
-    private final int NUMOFBYTES = 256;
+    private final int NUM_OF_BYTES = 256;
     private final int ROWSIZE = 4;
     private final int BLOCKSIZE = 16;
     private final byte REDUCTION = 0x1B; //The reduction polynomial for Rijndael x^8+x^4+x^3+x+1
@@ -17,9 +17,6 @@ public class ByteArrayOperator {
             0x09, 0x0e, 0x0b, 0x0d,
             0x0d, 0x09, 0x0e, 0x0b,
             0x0b, 0x0d, 0x09, 0x0e};
-
-    public ByteArrayOperator() {
-    }
 
     /**
      * Method adds 0xFF and later 0x00 bytes to make block 16 bytes long
@@ -402,7 +399,7 @@ public class ByteArrayOperator {
         value = value * 2;
         if (value > 255) {
             value = value ^ REDUCTION;
-            value = value - NUMOFBYTES;
+            value = value - NUM_OF_BYTES;
         }
         return value;
     }
@@ -415,7 +412,7 @@ public class ByteArrayOperator {
      */
     private int removeMinusFromByte(int value) {
         if (value < 0) {
-            value += NUMOFBYTES;
+            value += NUM_OF_BYTES;
         }
         return value;
     }

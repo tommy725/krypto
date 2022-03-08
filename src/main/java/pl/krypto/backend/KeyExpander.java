@@ -27,7 +27,7 @@ public class KeyExpander {
         temp = bao.changeByteBasedOnSbox(temp); //1.3 change 1.2 with sbox
         byte[] rcon = bao.rconOperation(iteration); //1.4.1 rcon operation
         temp = bao.xor(temp, rcon); //1.4.2 xor of 1.3 and 1.4.1
-        //1.5 adding xor of 4 bytes starting from -32 and 1.4.2
+        //1.5 adding xor of 4 bytes starting 32 bytes from end and 1.4.2
         addToKey(bao.xor(temp, bao.get4Bytes(32, originalKey)));
         //etap 2 (adding 12 bytes)
         for (int j = 0; j < 3; j++) {

@@ -12,6 +12,7 @@ import pl.krypto.backend.KeyGenerator;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -192,8 +193,8 @@ public class MainFormController {
             cryptogram.setText(byteArrayToString(cryptBytes));
         } else {
             cryptBytes = e.encrypt(plainText.getText().getBytes());
-            byte[] base64 = Base64.getEncoder().encode(cryptBytes);
-            String s = new String(base64);
+            pl.krypto.backend.Base64 b64 = new pl.krypto.backend.Base64();
+            String s = b64.encode(cryptBytes);
             cryptogram.setText(s);
         }
     }
@@ -213,9 +214,10 @@ public class MainFormController {
             plainData = cryptBytes;
             plainText.setText(byteArrayToString(cryptBytes));
         } else {
-            byte[] base64 = Base64.getDecoder().decode(cryptogram.getText().getBytes());
+            pl.krypto.backend.Base64 b64 = new pl.krypto.backend.Base64();
+            byte[] base64 = b64.decode(cryptogram.getText());
             cryptBytes = d.decrypt(base64);
-            String s = new String(cryptBytes);
+            String s = new String(cryptBytes, StandardCharsets.UTF_8);
             plainText.setText(s);
         }
     }
