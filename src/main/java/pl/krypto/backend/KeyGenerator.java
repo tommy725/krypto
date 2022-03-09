@@ -11,7 +11,7 @@ public class KeyGenerator {
      * @return String
      */
     public static String generateKey() {
-        return generateKey(128);
+        return generateKey(256);
     }
 
     /**

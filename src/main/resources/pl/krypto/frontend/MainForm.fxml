@@ -20,9 +20,9 @@
             prefWidth="158.0" text="Generuj klucz"/>
 
     <Button layoutX="20.0" layoutY="359.0" mnemonicParsing="false" onAction="#readFromFile" prefHeight="25.0"
-            prefWidth="130.0" text="Wczytaj plik"/>
-    <Button layoutX="165.0" layoutY="359.0" mnemonicParsing="false" onAction="#writeToFile" prefHeight="25.0"
-            prefWidth="130.0" text="Zapisz do pliku"/>
+            prefWidth="100.0" text="Wczytaj plik"/>
+    <Button fx:id="save1" disable="true" layoutX="128.0" layoutY="359.0" mnemonicParsing="false" onAction="#writeToFile"
+            prefHeight="25.0" prefWidth="100.0" text="Zapisz do pliku"/>
 
     <Label layoutX="20.0" layoutY="86.0" prefHeight="25.0" prefWidth="100.0" text="Tekst jawny"/>
     <TextArea fx:id="plainText" layoutX="20.0" layoutY="120.0" prefHeight="239.0" prefWidth="275.0"/>
@@ -31,12 +31,14 @@
            text="Szyfrogram"/>
     <TextArea fx:id="cryptogram" layoutX="305.0" layoutY="120.0" prefHeight="239.0" prefWidth="275.0"/>
 
-    <Button layoutX="195.0" layoutY="85.0" mnemonicParsing="false" onAction="#encrypt" prefHeight="25.0"
+    <Button fx:id="encrypt" layoutX="195.0" layoutY="85.0" mnemonicParsing="false" onAction="#encrypt" prefHeight="25.0"
             prefWidth="100.0" text="Szyfruj -&gt;"/>
-    <Button layoutX="305.0" layoutY="85.0" mnemonicParsing="false" onAction="#decrypt" prefHeight="25.0"
+    <Button fx:id="decrypt" layoutX="305.0" layoutY="85.0" mnemonicParsing="false" onAction="#decrypt" prefHeight="25.0"
             prefWidth="100.0" text="&lt;- Deszyfruj"/>
-    <Button layoutX="305.0" layoutY="359.0" mnemonicParsing="false" onAction="#readFromFileEncrypted" prefHeight="25.0"
-            prefWidth="130.0" text="Wczytaj plik"/>
-    <Button layoutX="450.0" layoutY="359.0" mnemonicParsing="false" onAction="#writeToFileEncrypted" prefHeight="25.0"
-            prefWidth="130.0" text="Zapisz do pliku"/>
+    <Button layoutX="371.0" layoutY="359.0" mnemonicParsing="false" onAction="#readFromFileEncrypted" prefHeight="25.0"
+            prefWidth="100.0" text="Wczytaj plik"/>
+    <Button fx:id="save2" disable="true" layoutX="480.0" layoutY="359.0" mnemonicParsing="false"
+            onAction="#writeToFileEncrypted" prefHeight="25.0" prefWidth="100.0" text="Zapisz do pliku"/>
+    <Button fx:id="reset" disable="true" layoutX="276.0" layoutY="359.0" mnemonicParsing="false" onAction="#reset"
+            text="RESET"/>
 </Pane>
