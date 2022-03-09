@@ -1,7 +1,6 @@
 package pl.krypto.backend;
 
 import java.util.ArrayList;
-import java.util.HexFormat;
 import java.util.List;
 
 public class KeyExpander {
@@ -59,6 +58,5 @@ public class KeyExpander {
         for (byte b : add) {
             originalKey.add(b);
         }
-        HexFormat hf = HexFormat.of().withDelimiter(" ");
     }
 }
