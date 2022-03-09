@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import pl.krypto.backend.Base64;
 
 public class MainFormController {
 
@@ -60,7 +61,7 @@ public class MainFormController {
             plainData = Files.readAllBytes(p);
             clearTextFields();
             plainText.setText(byteArrayToString(plainData));
-            changeDisableAfterRead();
+            changeDisableAfterRead(true);
         }
     }
 
@@ -100,7 +101,7 @@ public class MainFormController {
             cryptData = Files.readAllBytes(p);
             clearTextFields();
             cryptogram.setText(byteArrayToString(cryptData));
-            changeDisableAfterRead();
+            changeDisableAfterRead(false);
         }
     }
 
@@ -192,7 +193,7 @@ public class MainFormController {
             cryptogram.setText(byteArrayToString(cryptBytes));
         } else {
             cryptBytes = e.encrypt(plainText.getText().getBytes());
-            pl.krypto.backend.Base64 b64 = new pl.krypto.backend.Base64();
+            Base64 b64 = new Base64();
             String s = b64.encode(cryptBytes);
             cryptogram.setText(s);
         }
@@ -213,7 +214,7 @@ public class MainFormController {
             plainData = cryptBytes;
             plainText.setText(byteArrayToString(cryptBytes));
         } else {
-            pl.krypto.backend.Base64 b64 = new pl.krypto.backend.Base64();
+            Base64 b64 = new Base64();
             byte[] base64 = b64.decode(cryptogram.getText());
             cryptBytes = d.decrypt(base64);
             String s = new String(cryptBytes, StandardCharsets.UTF_8);
@@ -259,12 +260,13 @@ public class MainFormController {
     /**
      * Method disables components not connected with file
      */
-    private void changeDisableAfterRead() {
+    private void changeDisableAfterRead(boolean encrypt) {
         save1.setDisable(false);
         save2.setDisable(false);
         reset.setDisable(false);
         plainText.setDisable(true);
         cryptogram.setDisable(true);
-        decrypt.setDisable(true);
+        this.encrypt.setDisable(!encrypt);
+        decrypt.setDisable(encrypt);
     }
 }
