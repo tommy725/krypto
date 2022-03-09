@@ -16,7 +16,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Base64;
 import java.util.List;
 
 public class MainFormController {
@@ -228,7 +227,7 @@ public class MainFormController {
      */
     private List<Byte> expandKey() {
         Validator v = new Validator();
-        if (v.validatePassword(key.getText()) != null) {
+        if (v.validateKey(key.getText()) != null) {
             return null;
         }
         KeyExpander ke = new KeyExpander(key.getText().getBytes());

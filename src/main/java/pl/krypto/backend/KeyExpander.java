@@ -7,7 +7,7 @@ import java.util.List;
 public class KeyExpander {
     private final List<Byte> originalKey = new ArrayList<>();
     private ByteArrayOperator bao = new ByteArrayOperator();
-    private final int EXTENDNUMOFBYTES = 240;
+    private final int EXTEND_NUM_OF_BYTES = 240;
 
     public KeyExpander(byte[] originalKey) {
         for (byte b : originalKey) {
@@ -45,7 +45,7 @@ public class KeyExpander {
             //4.2.1 xor of 4.1 and 4 bytes starting 32 bytes from end and adding to key
             addToKey(bao.xor(temp, bao.get4Bytes(32, originalKey)));
         }
-        if (originalKey.size() < EXTENDNUMOFBYTES) {
+        if (originalKey.size() < EXTEND_NUM_OF_BYTES) {
             return expand(++iteration); //If not enought bytes repeat
         }
         return originalKey;

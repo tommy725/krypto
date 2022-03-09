@@ -9,7 +9,7 @@ public class Validator {
      * @param key key textField text
      * @return error alert
      */
-    public Alert validatePassword(String key) {
+    public Alert validateKey(String key) {
         if (key.length() != 32) {
             Alert err = new Alert(Alert.AlertType.ERROR);
             err.setTitle("ERROR");

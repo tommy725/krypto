@@ -5,8 +5,8 @@ import java.util.List;
 
 public class ByteArrayOperator {
     private final int NUM_OF_BYTES = 256;
-    private final int ROWSIZE = 4;
-    private final int BLOCKSIZE = 16;
+    private final int ROW_SIZE = 4;
+    private final int BLOCK_SIZE = 16;
     private final byte REDUCTION = 0x1B; //The reduction polynomial for Rijndael x^8+x^4+x^3+x+1
     private final static byte[] mds = {0x02, 0x03, 0x01, 0x01,
             0x01, 0x02, 0x03, 0x01,
@@ -25,11 +25,11 @@ public class ByteArrayOperator {
      * @return new block fulfilled to 16 bytes with 0xFF and 0x00
      */
     public byte[] addToLastFor16Bytes(byte[] original) {
-        int lastBlockBytesNumber = original.length % BLOCKSIZE;
+        int lastBlockBytesNumber = original.length % BLOCK_SIZE;
         if (lastBlockBytesNumber == 0) {
             return original;
         }
-        int bytesToAdd = BLOCKSIZE - lastBlockBytesNumber;
+        int bytesToAdd = BLOCK_SIZE - lastBlockBytesNumber;
         byte[] longer = new byte[original.length + bytesToAdd];
         System.arraycopy(original, 0, longer, 0, original.length);
         longer[original.length] = (byte) 0xFF;
@@ -47,7 +47,7 @@ public class ByteArrayOperator {
      */
     public byte[] remove00fromEnd(byte[] original) {
         int numOf0 = 0;
-        for (int i = original.length - 1; i >= original.length - BLOCKSIZE; i--) {
+        for (int i = original.length - 1; i >= original.length - BLOCK_SIZE; i--) {
             if (original[i] != 0) break;
             numOf0++;
         }
@@ -69,9 +69,9 @@ public class ByteArrayOperator {
      * @return key fragment
      */
     public byte[] getDataBlock(int number, byte[] data) {
-        byte[] temp = new byte[BLOCKSIZE];
-        for (int i = 0; i < BLOCKSIZE; i++) {
-            temp[i] = data[number * BLOCKSIZE + i];
+        byte[] temp = new byte[BLOCK_SIZE];
+        for (int i = 0; i < BLOCK_SIZE; i++) {
+            temp[i] = data[number * BLOCK_SIZE + i];
         }
         return temp;
     }
@@ -85,8 +85,8 @@ public class ByteArrayOperator {
      */
     public List<Byte> getKeyBlock(int iteration, List<Byte> key) {
         List<Byte> result = new ArrayList<>();
-        for (int i = 0; i < BLOCKSIZE; i++) {
-            result.add(key.get(iteration * BLOCKSIZE + i));
+        for (int i = 0; i < BLOCK_SIZE; i++) {
+            result.add(key.get(iteration * BLOCK_SIZE + i));
         }
         return result;
     }
@@ -99,8 +99,8 @@ public class ByteArrayOperator {
      * @return byte array
      */
     public byte[] get4Bytes(int start, List<Byte> list) {
-        byte[] temp = new byte[ROWSIZE];
-        for (int i = 0; i < ROWSIZE; i++) {
+        byte[] temp = new byte[ROW_SIZE];
+        for (int i = 0; i < ROW_SIZE; i++) {
             temp[i] = list.get(list.size() - start + i);
         }
         return temp;
@@ -116,12 +116,12 @@ public class ByteArrayOperator {
      * @return block
      */
     private byte[] move4RowsToBlock(byte[] row1, byte[] row2, byte[] row3, byte[] row4) {
-        byte[] result = new byte[BLOCKSIZE];
-        for (int i = 0; i < ROWSIZE; i++) {
-            result[i * ROWSIZE] = row1[i];
-            result[i * ROWSIZE + 1] = row2[i];
-            result[i * ROWSIZE + 2] = row3[i];
-            result[i * ROWSIZE + 3] = row4[i];
+        byte[] result = new byte[BLOCK_SIZE];
+        for (int i = 0; i < ROW_SIZE; i++) {
+            result[i * ROW_SIZE] = row1[i];
+            result[i * ROW_SIZE + 1] = row2[i];
+            result[i * ROW_SIZE + 2] = row3[i];
+            result[i * ROW_SIZE + 3] = row4[i];
         }
         return result;
     }
@@ -133,7 +133,7 @@ public class ByteArrayOperator {
      * @return new row
      */
     public byte[] rotate1Left(byte[] original) {
-        byte[] rotate = new byte[ROWSIZE];
+        byte[] rotate = new byte[ROW_SIZE];
         rotate[0] = original[1];
         rotate[1] = original[2];
         rotate[2] = original[3];
@@ -148,7 +148,7 @@ public class ByteArrayOperator {
      * @return new row
      */
     public byte[] rotate1Right(byte[] original) {
-        byte[] rotate = new byte[ROWSIZE];
+        byte[] rotate = new byte[ROW_SIZE];
         rotate[0] = original[3];
         rotate[1] = original[0];
         rotate[2] = original[1];
@@ -163,7 +163,7 @@ public class ByteArrayOperator {
      * @return rcon operation result
      */
     public byte[] rconOperation(int iteration) {
-        byte[] rcon = new byte[ROWSIZE];
+        byte[] rcon = new byte[ROW_SIZE];
         int num = 1;
         for (int i = 0; i < iteration - 1; i++) {
             num *= 2;
@@ -180,7 +180,7 @@ public class ByteArrayOperator {
      * @return XOR summed row
      */
     public byte[] xor(byte[] a1, byte[] a2) {
-        for (int i = 0; i < ROWSIZE; i++) {
+        for (int i = 0; i < ROW_SIZE; i++) {
             a1[i] = (byte) (a1[i] ^ a2[i]);
         }
         return a1;
@@ -204,10 +204,10 @@ public class ByteArrayOperator {
      * @return row with sbox changed bytes
      */
     public byte[] changeByteBasedOnSbox(byte[] temp) {
-        for (int i = 0; i < ROWSIZE; i++) {
+        for (int i = 0; i < ROW_SIZE; i++) {
             int intFromByte = temp[i];
             intFromByte = removeMinusFromByte(intFromByte);
-            temp[i] = (byte) SBox.getBox(intFromByte / BLOCKSIZE, intFromByte % BLOCKSIZE);
+            temp[i] = (byte) SBox.getBox(intFromByte / BLOCK_SIZE, intFromByte % BLOCK_SIZE);
         }
         return temp;
     }
@@ -219,10 +219,10 @@ public class ByteArrayOperator {
      * @return block with sbox changed bytes
      */
     public byte[] changeByteBasedOnSbox16(byte[] temp) {
-        for (int i = 0; i < BLOCKSIZE; i++) {
+        for (int i = 0; i < BLOCK_SIZE; i++) {
             int intFromByte = temp[i];
             intFromByte = removeMinusFromByte(intFromByte);
-            temp[i] = (byte) SBox.getBox(intFromByte / BLOCKSIZE, intFromByte % BLOCKSIZE);
+            temp[i] = (byte) SBox.getBox(intFromByte / BLOCK_SIZE, intFromByte % BLOCK_SIZE);
         }
         return temp;
     }
@@ -234,10 +234,10 @@ public class ByteArrayOperator {
      * @return block with inverse sbox changed bytes
      */
     public byte[] changeByteBasedOnInvSbox16(byte[] temp) {
-        for (int i = 0; i < BLOCKSIZE; i++) {
+        for (int i = 0; i < BLOCK_SIZE; i++) {
             int intFromByte = temp[i];
             intFromByte = removeMinusFromByte(intFromByte);
-            temp[i] = (byte) SBox.getInvBox(intFromByte / BLOCKSIZE, intFromByte % BLOCKSIZE);
+            temp[i] = (byte) SBox.getInvBox(intFromByte / BLOCK_SIZE, intFromByte % BLOCK_SIZE);
         }
         return temp;
     }
@@ -290,23 +290,23 @@ public class ByteArrayOperator {
      * @return return block with columns mixed
      */
     public byte[] mixColumns(byte[] array) {
-        byte[] result = new byte[BLOCKSIZE];
-        for (int i = 0; i < BLOCKSIZE; i++) {
-            int row = i % ROWSIZE;
-            int column = i / ROWSIZE;
-            byte[] temp = new byte[ROWSIZE];
-            for (int j = 0; j < ROWSIZE; j++) {
-                int dec = array[column * ROWSIZE + j];
-                int mul = mds[row * ROWSIZE + j];
+        byte[] result = new byte[BLOCK_SIZE];
+        for (int i = 0; i < BLOCK_SIZE; i++) {
+            int row = i % ROW_SIZE;
+            int column = i / ROW_SIZE;
+            byte[] temp = new byte[ROW_SIZE];
+            for (int j = 0; j < ROW_SIZE; j++) {
+                int dec = array[column * ROW_SIZE + j];
+                int mul = mds[row * ROW_SIZE + j];
                 if (mul == 3) {
                     mul = 2;
                 }
                 dec = removeMinusFromByte(dec);
                 int value = dec * mul;
-                if (mds[row * ROWSIZE + j] == 2 && value > 255) {
+                if (mds[row * ROW_SIZE + j] == 2 && value > 255) {
                     value = value ^ REDUCTION;
                 }
-                if (mds[row * ROWSIZE + j] == 3) {
+                if (mds[row * ROW_SIZE + j] == 3) {
                     value = value ^ dec;
                     if (value > 255) {
                         value = value ^ 0x1B;
@@ -325,14 +325,14 @@ public class ByteArrayOperator {
      * @return return block with columns mixed
      */
     public byte[] invMixColumns(byte[] array) {
-        byte[] result = new byte[BLOCKSIZE];
-        for (int i = 0; i < BLOCKSIZE; i++) {
-            int row = i % ROWSIZE;
-            int column = i / ROWSIZE;
-            byte[] temp = new byte[ROWSIZE];
-            for (int j = 0; j < ROWSIZE; j++) {
-                int arrayDecimalValue = array[column * ROWSIZE + j];
-                int multiplyValue = invmds[row * ROWSIZE + j];
+        byte[] result = new byte[BLOCK_SIZE];
+        for (int i = 0; i < BLOCK_SIZE; i++) {
+            int row = i % ROW_SIZE;
+            int column = i / ROW_SIZE;
+            byte[] temp = new byte[ROW_SIZE];
+            for (int j = 0; j < ROW_SIZE; j++) {
+                int arrayDecimalValue = array[column * ROW_SIZE + j];
+                int multiplyValue = invmds[row * ROW_SIZE + j];
                 arrayDecimalValue = removeMinusFromByte(arrayDecimalValue);
                 int value = arrayDecimalValue;
                 switch (multiplyValue) {
@@ -381,8 +381,8 @@ public class ByteArrayOperator {
      * @return XOR sum
      */
     public byte[] addRoundKey(byte[] array, List<Byte> key) {
-        byte[] result = new byte[BLOCKSIZE];
-        for (int i = 0; i < BLOCKSIZE; i++) {
+        byte[] result = new byte[BLOCK_SIZE];
+        for (int i = 0; i < BLOCK_SIZE; i++) {
             result[i] = (byte) (array[i] ^ key.get(i));
         }
         return result;

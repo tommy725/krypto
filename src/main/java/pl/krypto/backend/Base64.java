@@ -7,75 +7,26 @@ public class Base64 {
     private Map<String, String> base64 = new HashMap<>();
 
     public Base64() {
-        base64.put("000000", "A");
-        base64.put("000001", "B");
-        base64.put("000010", "C");
-        base64.put("000011", "D");
-        base64.put("000100", "E");
-        base64.put("000101", "F");
-        base64.put("000110", "G");
-        base64.put("000111", "H");
-        base64.put("001000", "I");
-        base64.put("001001", "J");
-        base64.put("001010", "K");
-        base64.put("001011", "L");
-        base64.put("001100", "M");
-        base64.put("001101", "N");
-        base64.put("001110", "O");
-        base64.put("001111", "P");
-        base64.put("010000", "Q");
-        base64.put("010001", "R");
-        base64.put("010010", "S");
-        base64.put("010011", "T");
-        base64.put("010100", "U");
-        base64.put("010101", "V");
-        base64.put("010110", "W");
-        base64.put("010111", "X");
-        base64.put("011000", "Y");
-        base64.put("011001", "Z");
-        base64.put("011010", "a");
-        base64.put("011011", "b");
-        base64.put("011100", "c");
-        base64.put("011101", "d");
-        base64.put("011110", "e");
-        base64.put("011111", "f");
-        base64.put("100000", "g");
-        base64.put("100001", "h");
-        base64.put("100010", "i");
-        base64.put("100011", "j");
-        base64.put("100100", "k");
-        base64.put("100101", "l");
-        base64.put("100110", "m");
-        base64.put("100111", "n");
-        base64.put("101000", "o");
-        base64.put("101001", "p");
-        base64.put("101010", "q");
-        base64.put("101011", "r");
-        base64.put("101100", "s");
-        base64.put("101101", "t");
-        base64.put("101110", "u");
-        base64.put("101111", "v");
-        base64.put("110000", "w");
-        base64.put("110001", "x");
-        base64.put("110010", "y");
-        base64.put("110011", "z");
-        base64.put("110100", "0");
-        base64.put("110101", "1");
-        base64.put("110110", "2");
-        base64.put("110111", "3");
-        base64.put("111000", "4");
-        base64.put("111001", "5");
-        base64.put("111010", "6");
-        base64.put("111011", "7");
-        base64.put("111100", "8");
-        base64.put("111101", "9");
+        int offset = 65; //A=65
+        for (int i = 0; i < 62; i++) {
+            if (i == 26) {
+                offset = 71; // a = 97 = 26 + 71
+            }
+            if (i == 52) {
+                offset = -4; // 0 = 48 = 52 - 4
+            }
+            StringBuilder binaryString = new StringBuilder(Integer.toBinaryString(i));
+            for (int j = binaryString.length(); j < 6; j++) {
+                binaryString.insert(0, "0");
+            }
+            base64.put(binaryString.toString(), String.valueOf(((char) (i + offset))));
+        }
         base64.put("111110", "+");
         base64.put("111111", "/");
     }
 
     public String encode(byte[] array) {
         String s = getBits(array);
-        System.out.println(s);
         int iterations = s.length() / 6;
         if (s.length() % 6 != 0) {
             iterations++;
@@ -111,8 +62,6 @@ public class Base64 {
             sb.append(key);
         }
         for (int i = 0; i < s.length() * 6 / 8; i++) {
-            System.out.println(sb.substring(8 * i, 8 * (i + 1)));
-            System.out.println(bitsToInt(sb.substring(8 * i, 8 * (i + 1))));
             result[i] = (byte) bitsToInt(sb.substring(8 * i, 8 * (i + 1)));
         }
 

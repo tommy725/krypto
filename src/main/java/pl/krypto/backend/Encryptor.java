@@ -6,7 +6,7 @@ import java.util.List;
 public class Encryptor {
     private List<Byte> key;
     private ByteArrayOperator bao = new ByteArrayOperator();
-    private final int BLOCKSIZE = 16;
+    private final int BLOCK_SIZE = 16;
     private final int ROUNDS = 14;
 
     public Encryptor(List<Byte> key) {
@@ -24,7 +24,7 @@ public class Encryptor {
         System.out.println("LONGER: " + hf.formatHex(data));
         data = bao.addToLastFor16Bytes(data);
         byte[] result = new byte[data.length];
-        for (int blockNumber = 0; blockNumber < data.length / BLOCKSIZE; blockNumber++) {
+        for (int blockNumber = 0; blockNumber < data.length / BLOCK_SIZE; blockNumber++) {
             byte[] block = bao.getDataBlock(blockNumber, data);
             System.out.println("BLOCK: " + hf.formatHex(block));
             block = encryptInitRound(block, key);
@@ -35,8 +35,8 @@ public class Encryptor {
             System.out.println("===========================================");
             System.out.println("BLOCK CRYPTOGRAM: " + hf.formatHex(cryptogram));
             System.out.println("===========================================");
-            for (int i = 0; i < BLOCKSIZE; i++) {
-                result[BLOCKSIZE * blockNumber + i] = cryptogram[i];
+            for (int i = 0; i < BLOCK_SIZE; i++) {
+                result[BLOCK_SIZE * blockNumber + i] = cryptogram[i];
             }
         }
         System.out.println("CRYPTOGRAM " + hf.formatHex(result));

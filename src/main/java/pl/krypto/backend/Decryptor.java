@@ -7,7 +7,7 @@ public class Decryptor {
     private ByteArrayOperator bao = new ByteArrayOperator();
     private List<Byte> key;
     private final int ROUNDS = 14;
-    private final int BLOCKSIZE = 16;
+    private final int BLOCK_SIZE = 16;
 
     public Decryptor(List<Byte> key) {
         this.key = key;
@@ -22,7 +22,7 @@ public class Decryptor {
         HexFormat hf = HexFormat.of().withDelimiter(" ");
         System.out.println("START: " + hf.formatHex(crypt));
         byte[] result = new byte[crypt.length];
-        for (int blockNumber = 0; blockNumber < crypt.length / BLOCKSIZE; blockNumber++) {
+        for (int blockNumber = 0; blockNumber < crypt.length / BLOCK_SIZE; blockNumber++) {
             byte[] block = bao.getDataBlock(blockNumber, crypt);
             block = decryptInitRound(block, key);
             for (int i = ROUNDS - 1; i > 0; i--) {
@@ -32,8 +32,8 @@ public class Decryptor {
             System.out.println("===========================================");
             System.out.println("PLAIN TEXT: " + hf.formatHex(block));
             System.out.println("===========================================");
-            for (int i = 0; i < BLOCKSIZE; i++) {
-                result[BLOCKSIZE * blockNumber + i] = block[i];
+            for (int i = 0; i < BLOCK_SIZE; i++) {
+                result[BLOCK_SIZE * blockNumber + i] = block[i];
             }
         }
         System.out.println("DECODED PLAN TEXT LONGER: " + hf.formatHex(result));
