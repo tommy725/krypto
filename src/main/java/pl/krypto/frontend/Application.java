@@ -1,12 +1,16 @@
 package pl.krypto.frontend;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.io.IOException;
-
 import static pl.krypto.frontend.MainFormController.*;
+
+/**
+ * =========================================================
+ * AES ENCRYPTOR/DECRYPTOR (2022)
+ * Kamil Bednarek 236500, Radosław Bucki 236507
+ * =========================================================
+ */
 
 public class Application extends javafx.application.Application {
     @Override
