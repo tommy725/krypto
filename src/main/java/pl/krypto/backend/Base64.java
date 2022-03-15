@@ -6,6 +6,9 @@ import java.util.Map;
 public class Base64 {
     private Map<String, String> base64 = new HashMap<>();
 
+    /**
+     * Base64 codes inicialization
+     */
     public Base64() {
         int offset = 65; //A=65
         for (int i = 0; i < 62; i++) {
@@ -25,6 +28,11 @@ public class Base64 {
         base64.put("111111", "/");
     }
 
+    /**
+     * Encode byte array to base64 encoded string
+     * @param array byte array
+     * @return string encoded
+     */
     public String encode(byte[] array) {
         String s = getBits(array);
         int iterations = s.length() / 6;
@@ -48,6 +56,11 @@ public class Base64 {
         return result.toString();
     }
 
+    /**
+     * Decode base64 string to byte array
+     * @param s string encoded in base64
+     * @return byte array
+     */
     public byte[] decode(String s) {
         byte[] result = new byte[s.length() * 6 / 8];
         String key = null;
@@ -69,6 +82,11 @@ public class Base64 {
         return result;
     }
 
+    /**
+     * Change every byte to 8 bits and return as string
+     * @param bytes byte array
+     * @return bits string
+     */
     public String getBits(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes) {
@@ -79,6 +97,11 @@ public class Base64 {
         return sb.toString();
     }
 
+    /**
+     * Chnage bits string to int
+     * @param bitsString bits string
+     * @return int value
+     */
     public int bitsToInt(String bitsString) {
         int result = 0;
         String reversed = new StringBuilder(bitsString).reverse().toString();
