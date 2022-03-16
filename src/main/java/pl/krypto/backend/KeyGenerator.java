@@ -7,15 +7,6 @@ public class KeyGenerator {
 
     /**
      * Returns a random key.
-     * Call with standard key size.
-     * @return String
-     */
-    public static String generateKey() {
-        return generateKey(256);
-    }
-
-    /**
-     * Returns a random key.
      * @param keySize number of key bits
      * @return String
      */

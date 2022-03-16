@@ -19,7 +19,7 @@ public class KeyExpander {
      * @param iteration iteration number
      * @return expanded key
      */
-    public List<Byte> expand(int iteration) {
+    public List<Byte> expand(int iteration, int keySize) {
         //etap 1 (adding 4 bytes)
         byte[] temp = bao.get4Bytes(4, originalKey); //1.1 move to temp vector
         temp = bao.rotate1Left(temp); //1.2 rotate one left
@@ -34,18 +34,27 @@ public class KeyExpander {
             addToKey(bao.xor(bao.get4Bytes(4, originalKey), bao.get4Bytes(32, originalKey)));
         }
         //etap 3 (adding 4 bytes)
-        temp = bao.get4Bytes(4, originalKey); //3.1 get last 4 bytes of key
-        temp = bao.changeByteBasedOnSbox(temp); //3.2 change 3.1 with sbox
-        //3.3 xor of 3.2 and 4 bytes starting 32 bytes from end and adding to key
-        addToKey(bao.xor(temp, bao.get4Bytes(32, originalKey)));
+        if (keySize == 256) {
+            temp = bao.get4Bytes(4, originalKey); //3.1 get last 4 bytes of key
+            temp = bao.changeByteBasedOnSbox(temp); //3.2 change 3.1 with sbox
+            //3.3 xor of 3.2 and 4 bytes starting 32 bytes from end and adding to key
+            addToKey(bao.xor(temp, bao.get4Bytes(32, originalKey)));
+        }
         //etap 4 (adding 12 bytes)
-        for (int i = 0; i < 3; i++) {
+        int etap4 = 0;
+        if (keySize == 256) {
+            etap4 = 3;
+        }
+        if (keySize == 192) {
+            etap4 = 3;
+        }
+        for (int i = 0; i < etap4; i++) {
             temp = bao.get4Bytes(4, originalKey); //4.1 get last 4 bytes of key
             //4.2.1 xor of 4.1 and 4 bytes starting 32 bytes from end and adding to key
             addToKey(bao.xor(temp, bao.get4Bytes(32, originalKey)));
         }
         if (originalKey.size() < EXTEND_NUM_OF_BYTES) {
-            return expand(++iteration); //If not enought bytes repeat
+            return expand(++iteration,keySize); //If not enought bytes repeat
         }
         return originalKey;
     }

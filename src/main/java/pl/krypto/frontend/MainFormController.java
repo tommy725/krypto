@@ -41,7 +41,8 @@ public class MainFormController {
      * Set generated key to key textField
      */
     public void generateKey() {
-        key.setText(KeyGenerator.generateKey());
+        int keySize = 0;
+        key.setText(KeyGenerator.generateKey(keySize));
     }
 
     /**
@@ -183,16 +184,17 @@ public class MainFormController {
     public void encrypt() {
         decrypt.setDisable(false);
         cryptogram.setText("");
-        List<Byte> key = expandKey();
+        int keySize = 0;
+        List<Byte> key = expandKey(keySize);
         if (key == null) return;
         Encryptor e = new Encryptor(key);
         byte[] cryptBytes;
         if (plainData != null) {
-            cryptBytes = e.encrypt(plainData);
+            cryptBytes = e.encrypt(plainData,keySize);
             cryptData = cryptBytes;
             cryptogram.setText(byteArrayToString(cryptBytes));
         } else {
-            cryptBytes = e.encrypt(plainText.getText().getBytes());
+            cryptBytes = e.encrypt(plainText.getText().getBytes(),keySize);
             Base64 b64 = new Base64();
             String s = b64.encode(cryptBytes);
             cryptogram.setText(s);
@@ -205,18 +207,19 @@ public class MainFormController {
     public void decrypt() {
         encrypt.setDisable(false);
         plainText.setText("");
-        List<Byte> key = expandKey();
+        int keySize = 0;
+        List<Byte> key = expandKey(keySize);
         if (key == null) return;
         Decryptor d = new Decryptor(key);
         byte[] cryptBytes;
         if (cryptData != null) {
-            cryptBytes = d.decrypt(cryptData);
+            cryptBytes = d.decrypt(cryptData,keySize);
             plainData = cryptBytes;
             plainText.setText(byteArrayToString(cryptBytes));
         } else {
             Base64 b64 = new Base64();
             byte[] base64 = b64.decode(cryptogram.getText());
-            cryptBytes = d.decrypt(base64);
+            cryptBytes = d.decrypt(base64,keySize);
             String s = new String(cryptBytes, StandardCharsets.UTF_8);
             plainText.setText(s);
         }
@@ -226,13 +229,13 @@ public class MainFormController {
      * Expands key to desired length;
      * @return expanded key
      */
-    private List<Byte> expandKey() {
+    private List<Byte> expandKey(int keySize) {
         Validator v = new Validator();
         if (v.validateKey(key.getText()) != null) {
             return null;
         }
         KeyExpander ke = new KeyExpander(key.getText().getBytes());
-        return ke.expand(1);
+        return ke.expand(1,keySize);
     }
 
     /**
