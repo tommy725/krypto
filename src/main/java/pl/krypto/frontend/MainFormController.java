@@ -3,6 +3,7 @@ package pl.krypto.frontend;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import pl.krypto.backend.Decryptor;
@@ -33,16 +34,19 @@ public class MainFormController {
     public Button reset;
     public Button encrypt;
     public Button decrypt;
+    public RadioButton bit192;
+    public RadioButton bit128;
+    public RadioButton bit256;
 
     private byte[] plainData;
     private byte[] cryptData;
+    int bitVersion = 128;
 
     /**
      * Set generated key to key textField
      */
     public void generateKey() {
-        int keySize = 0;
-        key.setText(KeyGenerator.generateKey(keySize));
+        key.setText(KeyGenerator.generateKey(bitVersion));
     }
 
     /**
@@ -184,17 +188,16 @@ public class MainFormController {
     public void encrypt() {
         decrypt.setDisable(false);
         cryptogram.setText("");
-        int keySize = 0;
-        List<Byte> key = expandKey(keySize);
+        List<Byte> key = expandKey(bitVersion);
         if (key == null) return;
         Encryptor e = new Encryptor(key);
         byte[] cryptBytes;
         if (plainData != null) {
-            cryptBytes = e.encrypt(plainData,keySize);
+            cryptBytes = e.encrypt(plainData,bitVersion);
             cryptData = cryptBytes;
             cryptogram.setText(byteArrayToString(cryptBytes));
         } else {
-            cryptBytes = e.encrypt(plainText.getText().getBytes(),keySize);
+            cryptBytes = e.encrypt(plainText.getText().getBytes(),bitVersion);
             Base64 b64 = new Base64();
             String s = b64.encode(cryptBytes);
             cryptogram.setText(s);
@@ -207,19 +210,18 @@ public class MainFormController {
     public void decrypt() {
         encrypt.setDisable(false);
         plainText.setText("");
-        int keySize = 0;
-        List<Byte> key = expandKey(keySize);
+        List<Byte> key = expandKey(bitVersion);
         if (key == null) return;
         Decryptor d = new Decryptor(key);
         byte[] cryptBytes;
         if (cryptData != null) {
-            cryptBytes = d.decrypt(cryptData,keySize);
+            cryptBytes = d.decrypt(cryptData,bitVersion);
             plainData = cryptBytes;
             plainText.setText(byteArrayToString(cryptBytes));
         } else {
             Base64 b64 = new Base64();
             byte[] base64 = b64.decode(cryptogram.getText());
-            cryptBytes = d.decrypt(base64,keySize);
+            cryptBytes = d.decrypt(base64,bitVersion);
             String s = new String(cryptBytes, StandardCharsets.UTF_8);
             plainText.setText(s);
         }
@@ -231,7 +233,7 @@ public class MainFormController {
      */
     private List<Byte> expandKey(int keySize) {
         Validator v = new Validator();
-        if (v.validateKey(key.getText()) != null) {
+        if (v.validateKey(key.getText(),keySize) != null) {
             return null;
         }
         KeyExpander ke = new KeyExpander(key.getText().getBytes());
@@ -271,5 +273,23 @@ public class MainFormController {
         cryptogram.setDisable(true);
         this.encrypt.setDisable(!encrypt);
         decrypt.setDisable(encrypt);
+    }
+
+    public void select128Bit() {
+        bit192.setSelected(false);
+        bit256.setSelected(false);
+        bitVersion = 128;
+    }
+
+    public void select192Bit() {
+        bit128.setSelected(false);
+        bit256.setSelected(false);
+        bitVersion = 192;
+    }
+
+    public void select256Bit() {
+        bit128.setSelected(false);
+        bit192.setSelected(false);
+        bitVersion = 256;
     }
 }

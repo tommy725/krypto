@@ -32,7 +32,7 @@ public class Encryptor {
             for (int i = 0; i < rounds - 1; i++) {
                 block = encryptCenterRound(block, key, i + 1);
             }
-            byte[] cryptogram = encryptEndRound(block, key);
+            byte[] cryptogram = encryptEndRound(block, key, keySize);
             for (int i = 0; i < BLOCK_SIZE; i++) {
                 result[BLOCK_SIZE * blockNumber + i] = cryptogram[i];
             }
@@ -74,11 +74,18 @@ public class Encryptor {
      * @param key key for encryption
      * @return return encrypted block
      */
-    private byte[] encryptEndRound(byte[] data, List<Byte> key) {
+    private byte[] encryptEndRound(byte[] data, List<Byte> key, int keySize) {
         byte[] temp;
+        int rounds = 10;
+        if (keySize == 256) {
+            rounds = 14;
+        }
+        if (keySize == 192) {
+            rounds = 12;
+        }
         temp = bao.changeByteBasedOnSbox16(data); //SubBytes
         temp = bao.shiftRows(temp); //ShiftRows
-        temp = bao.addRoundKey(temp, bao.getKeyBlock(14, key)); //AddRoundKey
+        temp = bao.addRoundKey(temp, bao.getKeyBlock(rounds, key)); //AddRoundKey
         return temp;
     }
 }

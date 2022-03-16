@@ -46,8 +46,15 @@ public class Decryptor {
      * @param key key for decryption
      * @return return decrypted block
      */
-    private byte[] decryptInitRound(byte[] data, List<Byte> key, int rounds) {
+    private byte[] decryptInitRound(byte[] data, List<Byte> key, int keySize) {
         byte[] temp;
+        int rounds = 10;
+        if (keySize == 256) {
+            rounds = 14;
+        }
+        if (keySize == 192) {
+            rounds = 12;
+        }
         temp = bao.addRoundKey(data, bao.getKeyBlock(rounds, key));
         temp = bao.invShiftRows(temp);
         temp = bao.changeByteBasedOnInvSbox16(temp);

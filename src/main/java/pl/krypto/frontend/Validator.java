@@ -9,11 +9,11 @@ public class Validator {
      * @param key key textField text
      * @return error alert
      */
-    public Alert validateKey(String key) {
-        if (key.length() != 32) {
+    public Alert validateKey(String key, int keySize) {
+        if (key.length() != keySize/8) {
             Alert err = new Alert(Alert.AlertType.ERROR);
             err.setTitle("ERROR");
-            err.setHeaderText("Password must have 32 signs!");
+            err.setHeaderText("Password must have " + keySize/8 + " signs!");
             err.show();
             return err;
         };
