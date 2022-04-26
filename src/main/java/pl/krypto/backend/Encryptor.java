@@ -6,7 +6,6 @@ public class Encryptor {
     private List<Byte> key;
     private ByteArrayOperator bao = new ByteArrayOperator();
     private final int BLOCK_SIZE = 16;
-    private final int ROUNDS = 14;
 
     public Encryptor(List<Byte> key) {
         this.key = key;
@@ -17,16 +16,23 @@ public class Encryptor {
      * @param data Byte array to encrypt
      * @return list of encrypted bytes
      */
-    public byte[] encrypt(byte[] data) {
+    public byte[] encrypt(byte[] data, int keySize) {
         data = bao.addToLastFor16Bytes(data);
         byte[] result = new byte[data.length];
         for (int blockNumber = 0; blockNumber < data.length / BLOCK_SIZE; blockNumber++) {
             byte[] block = bao.getDataBlock(blockNumber, data);
             block = encryptInitRound(block, key);
-            for (int i = 0; i < ROUNDS - 1; i++) {
+            int rounds = 9;
+            if (keySize == 256) {
+                rounds = 13;
+            }
+            if (keySize == 192) {
+                rounds = 11;
+            }
+            for (int i = 0; i < rounds - 1; i++) {
                 block = encryptCenterRound(block, key, i + 1);
             }
-            byte[] cryptogram = encryptEndRound(block, key);
+            byte[] cryptogram = encryptEndRound(block, key, keySize);
             for (int i = 0; i < BLOCK_SIZE; i++) {
                 result[BLOCK_SIZE * blockNumber + i] = cryptogram[i];
             }
@@ -68,11 +74,18 @@ public class Encryptor {
      * @param key key for encryption
      * @return return encrypted block
      */
-    private byte[] encryptEndRound(byte[] data, List<Byte> key) {
+    private byte[] encryptEndRound(byte[] data, List<Byte> key, int keySize) {
         byte[] temp;
+        int rounds = 10;
+        if (keySize == 256) {
+            rounds = 14;
+        }
+        if (keySize == 192) {
+            rounds = 12;
+        }
         temp = bao.changeByteBasedOnSbox16(data); //SubBytes
         temp = bao.shiftRows(temp); //ShiftRows
-        temp = bao.addRoundKey(temp, bao.getKeyBlock(14, key)); //AddRoundKey
+        temp = bao.addRoundKey(temp, bao.getKeyBlock(rounds, key)); //AddRoundKey
         return temp;
     }
 }

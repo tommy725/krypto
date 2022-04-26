@@ -5,7 +5,6 @@ import java.util.List;
 public class Decryptor {
     private ByteArrayOperator bao = new ByteArrayOperator();
     private List<Byte> key;
-    private final int ROUNDS = 14;
     private final int BLOCK_SIZE = 16;
 
     public Decryptor(List<Byte> key) {
@@ -17,12 +16,19 @@ public class Decryptor {
      * @param crypt Byte array to decrypt
      * @return list of decrypted bytes
      */
-    public byte[] decrypt(byte[] crypt) {
+    public byte[] decrypt(byte[] crypt, int keySize) {
         byte[] result = new byte[crypt.length];
         for (int blockNumber = 0; blockNumber < crypt.length / BLOCK_SIZE; blockNumber++) {
             byte[] block = bao.getDataBlock(blockNumber, crypt);
-            block = decryptInitRound(block, key);
-            for (int i = ROUNDS - 1; i > 0; i--) {
+            block = decryptInitRound(block, key, keySize);
+            int rounds = 9;
+            if (keySize == 256) {
+                rounds = 13;
+            }
+            if (keySize == 192) {
+                rounds = 11;
+            }
+            for (int i = rounds - 1; i > 0; i--) {
                 block = decryptCenterRound(block, key, i);
             }
             block = decryptEndRound(block, key);
@@ -40,9 +46,16 @@ public class Decryptor {
      * @param key key for decryption
      * @return return decrypted block
      */
-    private byte[] decryptInitRound(byte[] data, List<Byte> key) {
+    private byte[] decryptInitRound(byte[] data, List<Byte> key, int keySize) {
         byte[] temp;
-        temp = bao.addRoundKey(data, bao.getKeyBlock(ROUNDS, key));
+        int rounds = 10;
+        if (keySize == 256) {
+            rounds = 14;
+        }
+        if (keySize == 192) {
+            rounds = 12;
+        }
+        temp = bao.addRoundKey(data, bao.getKeyBlock(rounds, key));
         temp = bao.invShiftRows(temp);
         temp = bao.changeByteBasedOnInvSbox16(temp);
         return temp;

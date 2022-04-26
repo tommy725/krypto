@@ -2,19 +2,20 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-      prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+      prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="pl.krypto.frontend.MainFormController">
 
     <Label layoutX="20.0" layoutY="20.0" prefHeight="25.0" prefWidth="28.0" text="Klucz"/>
-    <TextField fx:id="key" layoutX="60.0" layoutY="20.0" prefHeight="25.0" prefWidth="519.0" promptText="Wpisz klucz"/>
-    <Button layoutX="271.0" layoutY="50.0" mnemonicParsing="false" onAction="#writeKeyToFile" prefHeight="25.0"
+    <TextField fx:id="key" layoutX="60.0" layoutY="20.0" prefHeight="25.0" prefWidth="429.0" promptText="Wpisz klucz"/>
+    <Button layoutX="187.0" layoutY="50.0" mnemonicParsing="false" onAction="#writeKeyToFile" prefHeight="25.0"
             prefWidth="150.0" text="Zapisz klucz do pliku"/>
-    <Button layoutX="429.0" layoutY="50.0" mnemonicParsing="false" onAction="#readKeyFromFile" prefHeight="25.0"
+    <Button layoutX="339.0" layoutY="50.0" mnemonicParsing="false" onAction="#readKeyFromFile" prefHeight="25.0"
             prefWidth="150.0" text="Odczytaj klucz z pliku"/>
     <Button layoutX="20.0" layoutY="50.0" mnemonicParsing="false" onAction="#generateKey" prefHeight="25.0"
             prefWidth="158.0" text="Generuj klucz"/>
@@ -41,4 +42,10 @@
             onAction="#writeToFileEncrypted" prefHeight="25.0" prefWidth="100.0" text="Zapisz do pliku"/>
     <Button fx:id="reset" disable="true" layoutX="276.0" layoutY="359.0" mnemonicParsing="false" onAction="#reset"
             text="RESET"/>
+    <RadioButton fx:id="bit192" layoutX="498.0" layoutY="45.0" mnemonicParsing="false" text="192 bit"
+                 onAction="#select192Bit"/>
+    <RadioButton fx:id="bit128" layoutX="498.0" layoutY="24.0" mnemonicParsing="false" onAction="#select128Bit"
+                 text="128 bit" selected="true"/>
+    <RadioButton fx:id="bit256" layoutX="498.0" layoutY="67.0" mnemonicParsing="false" text="256 bit"
+                 onAction="#select256Bit"/>
 </Pane>
